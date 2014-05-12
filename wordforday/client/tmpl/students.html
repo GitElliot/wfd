@@ -1,0 +1,244 @@
+<template name="students">
+    <div class="top-block">
+	
+    <table class="menu">
+     <tr>
+	<td>
+	     <img src="PoweredByATEXT3.png" alt='logo' height="125px" width="89px">
+	</td>
+	
+	<td>
+	    <div class="appName"> <b>Aztec's Teach by Text&trade; Platorm</b> 
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             {{>loginButtons}}  </div>          
+       <br>            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+	    <input type="button" class="menu-button student_class" id="student_menu" onclick="location.href='/students'" value="Students">
+	    <input type="button" class="menu-button word_classX" id="word_menu" onclick="location.href='/wordgroups'" value="Word Groups">
+	    <input type="button" class="menu-button campaign_classX" id="campaign_menu" onclick="location.href='/campaigns'" value="Campaigns">          		     
+	</td>
+     </tr>	
+    </table>
+    </div>  
+{{#if currentUser }}    
+       
+  <div id="status" class="wstatus" width="1000px">&nbsp; </div> 
+  
+     <div width="200px">
+         <a href="#" class="btn btn-success addStudent sprompt" id="addStudent" >Add Student</a>
+         <div class="sprompt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+         <label id="sprompt" class="sprompt">Add Student</label>
+    </div>     
+    <br>
+  
+  
+  
+  <table class="bothSides" width="1000px"  height="200px">
+    <tr>
+    <td class="left1" align="top" width="350px">
+            
+    <div class="container-fluid">   
+        <div class="row-fluid">
+        <div style="height:500px; overflow:auto">           
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th class="head1" >Cell Number</th>
+                        <th class="head1" >Name</th>
+                    </tr>
+                </thead>                  
+
+                <tbody>
+                    {{#each studentList}}
+                        {{>studentRow}}
+                    {{/each}}
+                </tbody>
+        
+            </table>
+          
+        <ul class="pager">
+          <li class="previous"><a href="#">&larr; {{prevStudent}}</a></li>
+          <li class="next"><a href="#">{{nextStudent}} &rarr;</a></li>
+        </ul>
+        </div>
+        </div>
+   </div>  <!-- End div class=container-fluid-->           
+   </td>  <!--end td left Side -->
+        
+    <td class="right1" align="top" width="595px">
+            
+   
+   <div class="accordion" id="accordion2">
+    
+  <div class="accordion-group">
+    <div class="accordion-heading head1">
+      
+           
+
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+         Student Information
+     
+      </a>
+        
+    
+      
+    </div> 
+    <div id="collapseOne" class="accordion-body collapse in">
+      <div class="accordion-inner">
+        {{>studentUpdateForm}}
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+        Options
+      </a>
+    </div>
+    <div id="collapseTwo" class="accordion-body collapse">
+      <div class="accordion-inner">
+        To Be Determined
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree">
+        Status
+      </a>
+    </div>
+    <div id="collapseThree" class="accordion-body collapse">
+      <div class="accordion-inner">
+        To Be Determined
+      </div>
+    </div>
+  </div>  
+  
+</div>   <!--      Accordion End-->
+
+<div class="modal-footer">
+   
+   {{#if editing_student}}
+            <a href="#" class="btn btn-success remove" >Delete</a>  
+            <a href="#" class="btn btn-success save" >Update</a>
+   {{else}}         
+            <a href="#" class="btn btn-success save" >Save</a>            
+   {{/if}}
+            <a href="#" class="btn cancel" data-dismiss="modal">Cancel</a> 
+      
+ 
+        </div>
+
+        </td>  <!--end td right Sides -->
+        
+    </tr> <!--  end tr bothSides-->
+  </table>   <!--end table bothSides-->
+  
+ {{else}}
+      <div class="signInPrompt">Please Sign in to Proceed</div>
+        
+ {{/if}}   
+    
+</template>
+
+<template name="studentRow">
+    <tr class="studentRow">
+        <td>{{cell}}</td> <td>{{name}}</td>
+    </tr>
+</template>
+
+
+<template name = "studentUpdateForm">   
+  
+            <div class="container1">
+            <div class="left1">  
+              Cell&nbsp;&nbsp;<input type="text" class="cell" name="cell" value="{{student.cell}}" id="cell">
+              &nbsp; XXX-XXX-XXXX
+              <br>
+            </div>
+            
+            <div class="center1">
+            <input type="checkbox" class="allowaudio" name="allowaudio" id="allowaudio" checked="yes"  >&nbsp;Allow Audio
+            </div>
+            </div>  <!--End Container1-->
+
+<br>  <br>              
+          <div class="container2">
+            <div class="left2">
+              
+           <div border="1px">
+            <table>
+              <tr>
+                <td>
+                  Name
+                </td>
+                <td>
+                  <input type="text" class="name" name="name"  value="{{student.name}}" id="name">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                 Login
+                </td>
+                <td>
+                  <input type="text" class="login" name="login" value="{{student.login}}" id="sid">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Password
+                </td>
+                <td>
+                  <input type="text" class="pword" name="pword" value="{{student.pword}}" id="pword">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Time Zone
+                </td>
+                <td>
+                <select class="sel-timez" id="sel-timez">
+                  <option value="-5">Eastern</option>
+                  <option value="-6">Central</option>
+                  <option value="-7">Mountain</option>
+                  <option value="-8">Pacific</option>
+                </select>
+                </td>
+              </tr>              
+            </table>
+                    
+           </div>
+          </div>
+            
+            <div class="right2">
+ <br>             
+              Groups&nbsp;&nbsp;
+              <select class="sel-groups" id="sel-groups">
+                <option value="Group 1">1</option>
+                <option value="Group 2">2</option>
+                <option value="Group 3">3</option>
+              </select>
+              
+              
+ <br>
+  
+              Campaign
+              <select class="sel-campaign" id="sel-campaign">
+                <option value="Campaign 1">1</option>
+                <option value="Campaign 2"> 2</option>
+                <option value="Campaign 3">3</option>
+              </select>
+              
+ <br>            
+            </div>
+            </div>   <!--End of Container -->
+
+     
+</template>

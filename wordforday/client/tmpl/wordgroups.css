@@ -1,0 +1,101 @@
+.wblock1 {
+    float:center;
+    width: 600px;
+}
+.wblock2 {
+    float:center;
+    width: 600px;
+}
+
+.student_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;
+}
+
+.word_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;    
+}
+
+.word_input {
+    width:400px;
+    size:400px;
+}
+.campaign_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;     
+}
+
+
+.wblock3 {
+    float:center;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.addWord {
+    float:left;
+}
+
+.wprompt {
+    float:left;
+    height:10px;
+    border:none;
+}
+
+.wuse {
+     width: 600px;
+    
+}
+
+.right2 {
+    border-radius: 5px;
+    padding: 3px 3px 3px 3px;
+
+}
+
+.wpoints {
+    width: 20px;
+
+}
+
+.wseqnum {
+    width: 50px;
+
+}
+
+.winstruction {
+    width: 600px;
+}
+
+.wflashtime {
+    width: 40px;
+}
+
+.wquestion {
+    width: 600px;
+}
+.wans {
+    width:600px;
+}
+.wremed {
+    width:600px;
+}
+.wurl {
+    width:450px;
+}
+
+.wordTable {
+    overflow: auto;
+    overflow-x:hidden;
+}
+
+.wordCol1 {
+    width: 70%;
+    overflow-x:hidden;
+    break-inside: always;
+}
+
+.wordCol2 {
+    width:30%;
+}

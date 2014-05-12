@@ -1,0 +1,76 @@
+.head1 {
+    background-color : rgb(255,127,0);
+    color: white;
+}
+.container1 {
+    width:100%;
+    text-align: center;
+}
+
+.status {
+    text-align: center;
+}
+
+
+.sprompt {
+    float:left;
+
+    border:none;
+}
+.student_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;
+}
+
+.word_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;    
+}
+
+.campaign_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;     
+}
+
+
+.cell {
+    width:110px;  
+}
+
+.left1 {
+    float:left;
+}
+
+.center1 {
+    float: center;
+}
+
+.right1 {
+    float:right;
+}
+
+.container2 {
+    width:100%;
+    text-align: center;
+}
+
+.left2 {
+    float:left;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.right2 {
+    float:right;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.sel-campaign {
+    width:120px;
+}
+
+
+.sel-groups {
+    width:120px;
+}

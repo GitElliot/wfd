@@ -1,0 +1,278 @@
+<template name="wordgroups">       
+  <div class="top-block">
+	
+    <table class="menu">
+     <tr>
+	<td>
+	     <img src="PoweredByATEXT3.png" alt='logo' height="125px" width="89px">
+	</td>
+	
+	<td>
+	    <div class="appName"> <b>Aztec's Teach by Text&trade; Platorm</b> 
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             {{>loginButtons}}  </div>          
+    
+	<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            
+	    <input type="button" class="menu-button student_classX" id="student_menu" onclick="location.href='/students'" value="Students">
+	    <input type="button" class="menu-button word_class" id="word_menu" onclick="location.href='/wordgroups'" value="Word Groups">
+	    <input type="button" class="menu-button campaign_classX" id="campaign_menu" onclick="location.href='/campaigns'" value="Campaigns">          		     
+	</td>
+     </tr>	
+    </table>
+     </div>
+  
+{{#if currentUser }}      
+  
+    <div id="status" class="wstatus" width="1000px">&nbsp; </div>  
+    
+    <p hidden id="highlight"></p>
+    <p hidden id="wcampaignids"></p>    
+    
+    <div width="200px">
+         <a href="#" class="btn btn-success addWord" id="addWord">Add Word Group</a>
+         <div class="wprompt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+         <label id="wprompt" class="wprompt">Add Word Group</label>
+    </div>     
+     
+     
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Campaign
+<select name="campaigns" id="campaignsTop">
+                   <option value="All">Library</option>
+		    {{#each campaignList}}
+			{{>campaignRow2}}
+		    {{/each}}
+</select> 
+
+
+     
+     
+     <table class="wgBothSides" width="1000px"  height="200px">
+	<tr>
+	    <td align="top" width="1000px">
+		<div style="height:500px;width:180px; overflow: auto" >
+	      <table class="table table-bordered table-striped wordTable">
+		<thead>
+		    <tr>		
+			<th class="head1 wordCol1" >Word</th>
+			<th class="head1 wordCol2" >Active?</th>
+		    </tr>
+		</thead>                  
+
+		<!--<a href="#" class="brand">Brand</a>-->
+		<tbody>
+		    {{#each wordList}}
+			{{>wordRow}}
+		    {{/each}}
+		</tbody>
+	
+	    </table>                  
+		</div>
+	    </td>
+	      	    
+	    <td class="right2" align="top" width="800px">  <!--  Top Right -->
+		   
+		 &nbsp;
+		 Word&nbsp;<input type="text" class="word_input" name="word" value="{{word.word}}" id="word">
+		 <input type="checkbox" class="wactive" name="wactive" id="wactive" checked="yes"> &nbsp; Active
+		 &nbsp; &nbsp; &nbsp;
+		 Correct Points&nbsp;<input  type="text" class="wpoints" name="wpoints" value="{{word.points}}" id="wpoints"> &nbsp; (1 - 10)
+                 
+		 &nbsp; &nbsp; 
+
+                 <input hide type="hidden" class="wseqnum" name="wseqnum" value="{{word.seqnum}}" id="wseqnum">		 
+	      <br>
+		&nbsp;
+		 Instruction&nbsp;<input type="text" class="winstruction" name="winstruction" value="{{word.instruction}}" id="winstruction">      
+	    
+  <div class="accordion" id="accordion2">
+    
+  <div class="accordion-group">
+    <div class="accordion-heading head1">
+    
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+      Use Examples   
+      </a>
+	     
+    </div> 
+    <div id="collapseOne" class="accordion-body collapse in">
+      <div class="accordion-inner">
+		<div class="wuseblock" >
+		    &nbsp;	       
+		    <br>
+		
+		    &nbsp;&nbsp;&nbsp;&nbsp;
+		    Use 1
+		    &nbsp;<input  type="text" class="wuse" name="wuse1" value="{{word.use1}}" id="wuse1">
+                    <br>
+		    &nbsp;&nbsp;&nbsp;&nbsp;		                 
+		    Use 2
+		    &nbsp;<input  type="text" class="wuse" name="wuse2" value="{{word.use2}}" id="wuse2">   
+		    <br>
+		    &nbsp;&nbsp;&nbsp;&nbsp;                       
+		    Use 3
+		    &nbsp;<input type="text" class="wuse" name="wuse3" value="{{word.use3}}" id="wuse3">    
+	      
+		</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+	Question
+      </a>
+    </div>
+    <div id="collapseTwo" class="accordion-body collapse">
+      <div class="accordion-inner">
+        &nbsp;&nbsp;&nbsp;<b>Question</b> &nbsp;
+        <input type="text" class="wquestion" name="wquestion" value="{{word.question}}" id="wquestion"> <br>
+            
+         Answer 1&nbsp;<input  type="text" class="wans" name="wans1" value="{{word.ans1}}" id="wans1">
+		       <input type="checkbox" class="wactive1" name="wactive1" id="wactive1" checked="yes"> &nbsp; Correct <br>
+       	 Answer 2&nbsp;<input  type="text" class="wans" name="wans2" value="{{word.ans2}}" id="wans2">
+		       <input type="checkbox" class="wactive2" name="wactive2" id="wactive2" checked="yes"> &nbsp; Correct <br>
+         Answer 3&nbsp;<input  type="text" class="wans" name="wans3" value="{{word.ans3}}" id="wans3">
+		       <input type="checkbox" class="wactive3" name="wactive3" id="wactive3" checked="yes"> &nbsp; Correct <br>              
+         Answer 4&nbsp;<input  type="text" class="wans" name="wans4" value="{{word.ans4}}" id="wans4">
+		       <input type="checkbox" class="wactive4" name="wactive4" id="wactive4" checked="yes"> &nbsp; Correct <br>              
+         Answer 5&nbsp;<input  type="text" class="wans" name="wans5" value="{{word.ans5}}" id="wans5">
+	               <input type="checkbox" class="wactive5" name="wactive5" id="wactive5" checked="yes"> &nbsp; Correct <br>                      
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+	Remediation
+      </a>
+    </div>
+    <div id="collapseThree" class="accordion-body collapse">
+      <div class="accordion-inner">
+		    <br>
+			    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                
+			     if Correct:&nbsp;<input  type="text" class="wremed" name="wremedifcorrect" value="{{word.remedifcorrect}}" id="wremedifcorrect">
+		    <br>
+			     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+			     if Wrong:&nbsp;&nbsp;<input  type="text" class="wremed" name="wremedifwrong" value="{{word.remedifwrong}}" id="wremedifwrong">
+		
+      </div>
+    </div>
+  </div>
+  
+   
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseFour">
+	Options and Audio
+      </a>
+    </div>
+    <div id="collapseFour" class="accordion-body collapse">
+      <div class="accordion-inner">
+		     <input type="checkbox" class="wenableaudio" name="wenableaudio" id="wenableaudio" checked="yes"> &nbsp; Enable Audio
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		Audio URL&nbsp;<input  type="text" class="wurl" name="wurl" value="{{word.wurl}}" id="wurl">
+	      <br>
+		Flash Time (sec)&nbsp;<input type="text" class="wflashtime" name="wflashtime" value="{{word.flashtime}}" id="wflashtime">&nbsp;&nbsp;(1 - 100)                 
+	      <br>
+		
+      </div>
+    </div>
+  </div> 
+   
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseFive">
+	Add to Campaign
+
+      </a>
+    </div>
+    <div id="collapseFive" class="accordion-body collapse">
+      <div class="accordion-inner">
+	Campaigns&nbsp;&nbsp;
+        <table>
+            <tr>
+                <td>
+          <select name="campaignsBot" id="campaignsBot">
+		    {{#each campaignList}}
+			{{>campaignRow2}}
+		    {{/each}}
+        </select>
+        <br>
+         <a href="#" class="btn btn-success addcampaign" >Add</a>
+         <a href="#" class="btn btn-success removecampaign" >Remove</a>                        
+         <a href="#" class="btn btn-success clearcampaign" >Clear all</a>                         
+                </td>
+
+                <td>
+        &nbsp;&nbsp;&nbsp;            
+        <textarea readonly rows="5" cols="90" id="wcampaign" >
+        &nbsp;
+        </textarea>    
+            
+                    
+                </td>
+            </tr>
+        </table>
+   
+      </div>
+    </div>
+  </div>   
+   
+</div>   <!--      Accordion End-->           
+     	    
+	    
+	<br><br>
+        
+        
+<div class="left1">
+   {{#if editing_word}}
+            <a href="#" class="btn btn-success moveup" >Move Up</a>  
+            <a href="#" class="btn btn-success movedown" >Move Down</a>
+   {{/if}}         
+</div>        
+<div class="right1">
+   
+   {{#if editing_word}}
+            <a href="#" class="btn btn-success remove" >Delete</a>  
+            <a href="#" class="btn btn-success save" >Update</a>
+   {{else}}         
+            <a href="#" class="btn btn-success save" >Save</a>            
+   {{/if}}
+            <a href="#" class="btn btn-success clear" >Clear</a>   
+            <a href="#" class="btn cancel" data-dismiss="modal">Cancel</a>
+</div>
+					    
+	    </td>   <!--  Top Right -->
+		     
+	</tr>
+		
+     </table>   <!--END wgBothSides -->
+ {{else}}
+      <div class="signInPrompt">Please Sign in to Proceed</div>    
+ {{/if}} 
+</template>
+
+
+<template name="wordRow">
+    <tr class="wordRow">
+	<td id="{{_id}}" class="wordCol1">{{word}}</td>
+	<td class="enablewordshort wordCol2"><input id="B{{_id}}" type="checkbox" checked="{{active}}"></td>
+    </tr>
+</template>
+
+<template name="campaignRow2">
+        <option value="{{_id}}">
+          {{campaign}}        
+        </option>
+
+</template>
+
+

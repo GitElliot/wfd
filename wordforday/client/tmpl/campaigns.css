@@ -1,0 +1,77 @@
+.cblock1 {
+    float:center;
+    width: 600px;
+}
+.cblock2 {
+    float:center;
+    width: 600px;
+}
+
+.student_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;
+}
+
+.word_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;    
+}
+
+.campaign_class {
+     background-color :#FF7F00;
+     color :#FFFFFF;     
+}
+
+.sendBlock {
+    float:center;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.tbh {
+    font-size: 10px;
+    line-height: 5;
+    height: 10px;
+    background-color: #CCCCFF;
+}
+
+.addCampaign {
+    float:left;
+}
+
+.cprompt {
+    float:left;
+    height:10px;
+    border:none;
+}
+
+
+.TestDetail {
+    float:left;
+}
+
+
+.campaign {
+    width: 250px;
+}
+
+.keyword {
+    width: 250px;
+}
+
+.sendtime {
+    width: 60px;
+}
+.sendcount {
+    width:60px;
+}
+.right {
+    float:right;
+}
+.center  {
+    float:center;
+}
+.xdate {
+    width:80px;
+}

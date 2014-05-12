@@ -1,0 +1,44 @@
+<template name="homepage">
+   
+    
+   <div class="top-block">
+	
+    <table class="menux">
+     <tr>
+	<td>
+	     <img src="PoweredByATEXT3.png" alt='logo' height="125px" width="89px">
+	</td>
+	
+	<td>
+         
+	    <div class="appName"> <b>Aztec's Teach by Text&trade; Platorm</b> 
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             {{>loginButtons}}  </div>
+            
+                        
+ {{#if currentUser}}
+       <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            
+	    <input type="button" class="menu-button student_classX" id="student_menu" onclick="location.href='/students'" value="Students">
+	    <input type="button" class="menu-button word_classX" id="word_menu" onclick="location.href='/wordgroups'" value="Word Groups">
+	    <input type="button" class="menu-button campaign_classX" id="campaign_menu" onclick="location.href='/campaigns'" value="Campaigns">
+ {{/if}}              
+        </td>
+        
+     </tr>	
+    </table>  
+     </div>
+   
+     <br>
+   {{#if currentUser}}
+   {{else}}
+      <div class="signInPrompt">Please Sign in to Proceed</div>
+
+   {{/if}}  
+     
+</template>
+

@@ -1,0 +1,276 @@
+<template name="campaigns">
+     <p hidden id="highlight"></p>   
+     
+   <div class="top-block">
+	
+    <table class="menu">
+     <tr>
+	<td>
+	     <img src="PoweredByATEXT3.png" alt='logo' height="125px" width="89px">
+	</td>
+	
+	<td>
+	    <div class="appName"> <b>Aztec's Teach by Text&trade; Platorm</b> 
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             {{>loginButtons}}  </div>    
+    <br>	
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;            
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    <input type="button" class="menu-button student_classX" id="student_menu" onclick="location.href='/students'" value="Students">
+	    <input type="button" class="menu-button word_classX" id="word_menu" onclick="location.href='/wordgroups'" value="Word Groups">
+	    <input type="button" class="menu-button campaign_class" id="campaign_menu" onclick="location.href='/campaigns'" value="Campaigns">          		     
+	</td>
+     </tr>	
+    </table>
+     </div>
+
+{{#if currentUser }}        
+        <div id="status" class="cstatus" width="1000px">&nbsp; </div>      
+    
+    <div width="200px">
+         <a href="#" class="btn btn-success addCampaign" id="addCampaign">Add Campaign</a>
+         <div class="wprompt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+         <label id="cprompt" class="wprompt">Add Campaign</label>
+	 &nbsp;&nbsp;&nbsp;Search String&nbsp;<input type="text" id="searchString" class="searchstring">
+    </div>     
+     
+     <table class="wgBothSides" width="1000px"  height="400px">
+	<tr>
+	    <td align="top" width="1000px">
+		<div style="height:620px; overflow:auto">
+	      <table class="table table-bordered table-striped table-hover">
+		<thead>
+		    <tr>		
+			<th width="30px" class="head1" >Campaign</th>
+			<th width="30px"  class="head1" >Keyword (opt)</th>
+		    </tr>
+		</thead>                  
+
+		<tbody>
+		    {{#each campaignList}}
+			{{>campaignRow}}
+		    {{/each}}
+		</tbody>
+	
+	    </table>
+        <ul class="pager">
+          <li class="previous"><a href="#">&larr; {{prevCampaign}}</a></li>
+          <li class="next"><a href="#">{{nextCampaign}} &rarr;</a></li>
+        </ul>	      
+	      
+	      
+	    </div>
+	    </td>
+	      	    
+	    <td class="right2" align="top" width="700px">  <!--  Top Right -->
+		 
+		 <table>
+		    <tr>
+			<td>
+			    &nbsp; Campaign Name 
+			</td>
+			<td>
+			<input type="text" class="campaign" name="campaign" value="{{campaign.name}}" id="ccampaign">
+			</td>
+		    </tr>
+		    <tr>
+			<td>
+			    &nbsp; Keyword (optional) &nbsp;
+			</td>
+			<td>
+			    <input type="text" class="keyword" name="keyword" value="{{campaign.keyword}}" id="ckeyword">
+			</td>
+		    </tr>		    
+		    
+		 </table>  
+		 		 
+	      <br>
+    
+	    
+  <div class="accordion" id="accordion2">
+    
+  <div class="accordion-group">
+    <div class="accordion-heading head1">
+    
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+      Sequence
+      </a>
+	     
+    </div> 
+    <div id="collapseOne" class="accordion-body collapse">
+      <div class="accordion-inner">
+	
+	<table>
+	    <tr>
+		<td>
+		      <textarea readonly rows="12" cols="95" id="csequencetext" ></textarea>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		                                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</td>
+		
+		<td>
+		    <div class="TestDetail">
+                          <br> <br>
+			   <b>Insert Message After...</b>
+				<div class="sendBlock">
+			          &nbsp;&nbsp;
+			           <br>
+			          &nbsp;&nbsp;Message &nbsp;<input type="text" class="imessage tbh" name="imessage" value="{{campaign.imessage}}" id="imessage">
+			          &nbsp;&nbsp;&nbsp;
+			          <br>
+			        <div class="center">
+				    &nbsp; &nbsp; &nbsp; &nbsp;
+				    
+			            <a href="#" class="btn btn-success seqmsgremove" >Remove</a>
+				    &nbsp; &nbsp; 
+			            <a href="#" class="btn btn-success seqmsginsert" >Insert</a>
+				    &nbsp; &nbsp;				    
+			            <a href="#" class="btn btn-success seqmsgclear" >Clear All</a>
+
+				    
+				    <br>
+				   &nbsp;	
+				</div>		    
+			    </div>	   
+		    </div>
+		</td>
+	    </tr>
+	    
+	    
+	    
+	</table>
+	
+
+
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+	Schedule
+      </a>
+    </div>
+    <div id="collapseTwo" class="accordion-body collapse">
+      <div class="accordion-inner">
+        &nbsp;&nbsp;&nbsp;<b>Send on:</b> &nbsp;	
+	<div class="sendBlock">
+	    &nbsp;&nbsp;
+	     <input type="checkbox" class="wactive" name="wactive" id="monactive" checked="yes"> &nbsp; Monday&nbsp;&nbsp;
+	     <input type="checkbox" class="wactive" name="wactive" id="tueactive" checked="yes"> &nbsp; Tuesday&nbsp;&nbsp;
+	     <input type="checkbox" class="wactive" name="wactive" id="wedactive" checked="yes"> &nbsp; Wednesday&nbsp;&nbsp;
+	     <input type="checkbox" class="wactive" name="wactive" id="thuactive" checked="yes"> &nbsp; Thursday&nbsp;&nbsp;
+	     <input type="checkbox" class="wactive" name="wactive" id="friactive" checked="yes"> &nbsp; Friday&nbsp;&nbsp;
+	     <input type="checkbox" class="wactive" name="wactive" id="satactive" checked="yes"> &nbsp; Saturday&nbsp;&nbsp;
+	     <input type="checkbox" class="wactive" name="wactive" id="sunactive" checked="yes"> &nbsp; Sunday&nbsp;&nbsp;		
+	    <br><br>	
+	    &nbsp;Send Time &nbsp;<input type="text" class="sendtime tbh" name="sendtime" value="{{campaign.sendtime}}" id="sendtime">
+	    &nbsp;&nbsp;
+	     <input type="checkbox" class="wactive" name="wactive" id="studentactive" checked="yes"> &nbsp; Is Student
+	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	     
+	     Send &nbsp;<input type="text" class="sendcount tbh" name="sendcount" value="{{campaign.sendcount}}" id="sendcount"> 
+	     &nbsp;words each day    
+	</div>
+        &nbsp;&nbsp;&nbsp;<b>Send test for previous words:</b> &nbsp;	
+	<div class="sendBlock">
+	    &nbsp;&nbsp;
+	     after sending &nbsp;<input type="text" class="sendcount tbh" name="sendaftercount" value="{{campaign.sendaftercount}}" id="sendaftercount">
+	     &nbsp;words.
+	</div>
+       &nbsp;&nbsp;&nbsp;<b>Do not send words on these dates:</b> &nbsp;	
+	<div class="sendBlock">
+	    &nbsp;&nbsp;
+
+	     
+	     
+	     
+	     
+        <table>
+            <tr>
+                <td> &nbsp;&nbsp;
+	     Date &nbsp;<input type="text" class="xdate tbh" name="xdate" value="{{campaign.xdate}}" id="xdate">
+	     &nbsp;&nbsp; mm/dd/yyyy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluded Date List
+        <br> &nbsp;&nbsp;
+         <a href="#" class="btn btn-success addxdate" >Add</a>
+         <a href="#" class="btn btn-success removexdate" >Remove</a>                        
+         <a href="#" class="btn btn-success clearxdates" >Clear all</a>                         
+                </td>
+
+                <td>
+	    
+        &nbsp;&nbsp;&nbsp;
+	<textarea readonly  class="xdatelist" name="xdatelist" value="{{campaign.xdatelist}}" id="xdatelist" rows="5" cols="55"></textarea>    
+            
+                    
+                </td>
+            </tr>
+        </table>	     
+	     
+	     
+	     
+	     
+	     
+	</div>   
+	
+	
+                   
+      </div>
+    </div>
+  </div>
+ 
+   
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseFour">
+	Options
+      </a>
+    </div>
+    <div id="collapseFour" class="accordion-body collapse">
+      <div class="accordion-inner">
+    
+        Options  
+		
+      </div>
+    </div>
+  </div> 
+
+   
+</div>   <!--      Accordion End-->           
+     	      
+        
+   
+<div class="right1">
+   
+   {{#if editing_campaign}}
+            <a href="#" class="btn btn-success remove" >Delete</a>  
+            <a href="#" class="btn btn-success save" >Update</a>
+   {{else}}         
+            <a href="#" class="btn btn-success save" >Save</a>            
+   {{/if}}  
+            <a href="#" class="btn btn-success clear" >Clear</a>
+            <a href="#" class="btn cancel" data-dismiss="modal">Cancel</a>     	    
+</div>
+					    
+	    </td>   <!--  Top Right -->
+		     
+	</tr>
+		
+     </table>   <!--END wgBothSides -->
+     
+ {{else}}
+      <div class="signInPrompt">Please Sign in to Proceed</div>
+ {{/if}} 
+</template>
+
+
+<template name="campaignRow">
+    <tr class="campaignRow">
+	<td id="{{_id}}" width="60px">{{campaign}}</td>
+	<td width="60px">{{keyword}}</td>	
+    </tr>
+</template>
+
+
