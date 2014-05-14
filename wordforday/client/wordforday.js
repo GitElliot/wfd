@@ -16,7 +16,6 @@ if (Meteor.isClient) {
   Session.setDefault('wordCursor', 0);
   Session.setDefault('campaignCursor', 0);
   
-  
   Meteor.Router.add({
     '/':'homepage',
     '/students':'students',
@@ -91,19 +90,14 @@ if (Meteor.isClient) {
     'dblclick .studentRow':function(evt, tmpl){
       Session.set('editing_student', tmpl.data._id);     
       mySetText('sprompt','Editing Student');
-      var student = Students.findOne({_id:tmpl.data._id});       
-      
-      $('.cell').val(student.cell);
-      $('.name').val(student.name);
-      $('.login').val(student.login);
-      $('.pword').val(student.pword);
+      var student = Students.findOne({_id:tmpl.data._id});             
+      mySetText('cell', student.cell);
+      mySetText('name', student.name);
+      mySetText('login', student.login);
+      mySetText('pword', student.pword);
       $('.sel-timez').val(student.tzoffset)
-      
-      if (student.allowaudio == true) {
-             document.getElementById('allowaudio').checked = 1;
-      } else {
-             document.getElementById('allowaudio').checked = 0;
-      }
+      mySetButton('allowaudio', student.allowaudio);
+      setHighLight(tmpl.data._id);     
       myClearAlert();
 
     }
@@ -119,8 +113,21 @@ if (Meteor.isClient) {
   
   
   Template.students.events({
+    'click .studentSearch' :function(evt, tmpl) {
+        var studentToFind = myGetText('studentString');
+        clearForm();
+        var id = searchStudentFromDB(studentToFind);
+        
+        if (id == false) {
+             myRedAlert('Student Not Found');
+        } else {
+            Session.set('editing_student', id);
+            mySetText('sprompt', "Editing Student");
+            setHighLight(id);
+        };          
+    },
     'click .save':function(evt, tmpl) {
-      var cell = tmpl.find('.cell').value;
+      var cell = tmpl.find('.cell').value.trim();
       var name = tmpl.find('.name').value;
       var login = tmpl.find('.login').value;
       var pword = tmpl.find('.pword').value;  
@@ -174,20 +181,46 @@ if (Meteor.isClient) {
     return Session.get('showStudentDialog');
   }
   
-  var addStudent = function(cell, name, login, pword, tzoffset, allowaudio) { 
-    if (cell.length == 0) {
+  var searchStudentFromDB = function(cell){
+        
+      var student = Students.findOne({cell:cell});
+      
+      if (student == null) {
+        return false;
+      }
+           
+      mySetText('cell', student.cell);
+      mySetText('name', student.name);
+      mySetText('login', student.login);
+      mySetText('pword', student.pword);
+      $('.sel-timez').val(student.tzoffset);
+      mySetButton('allowaudio', student.allowaudio);
+      return student._id;
+    
+  }
+  
+  var addStudent = function(ncell, name, login, pword, tzoffset, allowaudio) {
+    if (ncell.length == 0) {
       myRedAlert("Cell number is required");
       return false;
     }
     
-    if (phoneNumberCheck(cell) == false) {
+    if (phoneNumberCheck(ncell) == false) {
       myRedAlert("Cell number invalid")
       return false;
     }
     
-    Students.insert({cell:cell, name:name, login:login, pword:pword, tzoffset:tzoffset, allowaudio:allowaudio});
+    var cellexists = Students.findOne({cell:ncell});
+    
+    if (cellexists) {
+      myRedAlert("Cell number already in database");
+      return false;
+    }
+    
+    Students.insert({cell:ncell, name:name, login:login, pword:pword, tzoffset:tzoffset, allowaudio:allowaudio});
     
     myAlert("Student Inserted");
+    return true;
       
   }
   
@@ -207,13 +240,12 @@ if (Meteor.isClient) {
     return true;
   }
   var clearForm = function() {
-    document.getElementById('cell').value = "";
-    document.getElementById('name').value = "";
-    document.getElementById('login').value = "";
-    document.getElementById('pword').value = "";
-    document.getElementById('tzoffset').value = "";
-    document.getElementById('allowaudio').checked = true;
-    
+    mySetText('cell', "");
+    mySetText('name', "");
+    mySetText('login', "");
+    mySetText('pword', "");
+    $('.sel-timez').val(-5)
+    mySetButton('allowaudio',false);
     return;
   }
   
@@ -332,7 +364,7 @@ if (Meteor.isClient) {
   //JAVASCRIPT FOR WORD GROUPS         JAVASCRIPT FOR WORD GROUPS         JAVASCRIPT FOR WORD GROUPS
   
   //
-  // Highlight one row at a time    NOT WORKING YET
+  // Highlight one row at a time 
     var setHighLight = function(thisID){
       if (thisID == "") {
         return;
@@ -388,7 +420,7 @@ if (Meteor.isClient) {
       var currentId = "";
       var found = false;
       
-      var i = 0;
+      var i = 0;  
       wlist.forEach(function(wgroup) { 
         
         if (found == false) {
@@ -397,7 +429,7 @@ if (Meteor.isClient) {
             currentId = wgroup._id;
           }
           if (found == false) {
-          previousSeq = wgroup.seqnum;
+          previousSeq = wgroup.seqnum;  
           previousId = wgroup._id;
           }
         }   
@@ -474,7 +506,8 @@ if (Meteor.isClient) {
       
       myClearButton('wenableaudio');
       myClearText('wurl');
-      myClearText('wcampaign');
+      myClearText('wcampaign');   // textarea
+      myClearText('wcampaignids');  // hidden
     return;
   
   }
@@ -505,11 +538,16 @@ if (Meteor.isClient) {
     myAlert("Word Group Removed");
     document.getElementById('highlight').innerHTML  = "";
   }
+
   
   //  Read WordGroup from database and fill display
-  var displayWordGroupFromDB = function(id){
+  var searchWordFromDB = function(thisWord){
        
-      var word = Words.findOne({_id:id});
+      var word = Words.findOne({word:thisWord});
+      
+      if (word == "") {
+        return false;
+      }
       
       mySetText('wseqnum',word.seqnum);
       mySetText('word', word.word);
@@ -542,12 +580,68 @@ if (Meteor.isClient) {
       
       mySetButton('wenableaudio', word.enableaudio);
       mySetText('wurl', word.url);
-      mySetText('wcampaign', word.campaign);
-    
-    
+      
+      mySetText('wcampaignids', word.campaign);  // hidden
+      campRender();
+      
+      
+      return word._id;
   }
   
- 
+    
+  //  Read WordGroup from database and fill display
+  var displayWordGroupFromDB = function(id){
+       
+      var word = Words.findOne({_id:id});
+      
+      mySetText('wseqnum',word.seqnum);
+      mySetText('word', word.word);
+      mySetButton('wactive', word.active);
+      mySetText('wpoints', word.points);
+      mySetText('winstruction', word.instruction);
+      mySetText('wflashtime', word.flashtime);
+      mySetText('wuse1', word.use1);
+      mySetText('wuse2', word.use2);
+      mySetText('wuse3', word.use3);
+      mySetText('wquestion', word.question);
+      
+      mySetText('wans1', word.ans1);
+      mySetButton('wactive1', word.active1);
+       
+      mySetText('wans2', word.ans2);
+      mySetButton('wactive2', word.active2);
+      
+      mySetText('wans3', word.ans3);
+      mySetButton('wactive3', word.active3);
+      
+      mySetText('wans4', word.ans4);
+      mySetButton('wactive4', word.active4);
+      
+      mySetText('wans5', word.ans5);
+      mySetButton('wactive5', word.active5);  
+                  
+      mySetText('wremedifcorrect',word.remedifcorrect);
+      mySetText('wremedifwrong', word.remedifwrong);
+      
+      mySetButton('wenableaudio', word.enableaudio);
+      mySetText('wurl', word.url);
+           
+      mySetText('wcampaignids', word.campaign);  // hidden
+      campRender();
+  }
+  
+   
+    
+  Template.wordgroups.nextWord = function() {
+    return (Number(Session.get('wordCursor')) + 10) + " - " + (Number(Session.get('wordCursor')) + 20);
+  }
+  
+  Template.wordgroups.prevWord = function() {
+    if (Number(Session.get('wordCursor')) < 10) {
+      return '';
+    }
+    return (Number(Session.get('wordCursor')) - 10) + " - " + (Number(Session.get('wordCursor')));
+  }
   
   Template.wordgroups.editing_word = function() {
     return Session.get('editing_word');
@@ -555,7 +649,7 @@ if (Meteor.isClient) {
   
   Template.wordgroups.wordList = function() {
     
-   return Words.find({}, {sort:{'seqnum' :1}});
+   return Words.find({}, {sort:{'seqnum' :1}, limit:10});
   
   }
   
@@ -587,15 +681,41 @@ if (Meteor.isClient) {
       var buttonValue = myGetButton(buttonID);
       var retVal = Words.update(tmpl.data._id, {$set:{active:buttonValue}});
     }
-  
-    
   })
 
     Template.wordgroups.events({
+     'click .wordSearch' :function(evt, tmpl) {
+        var wordToFind = myGetText('wordSearchString');
+        clearWordForm();
+        var id = searchWordFromDB(wordToFind);
+        
+        if (id == false) {
+             myRedAlert('Word Group Not Found');
+             return;
+        } else {
+            Session.set('editing_word', id);
+            mySetText('wprompt', "Editing Word");
+            setHighLight(id);
+        };
+      },
+     'click .previous ':function(evt, tmpl){
+      if (Number(Session.get('wordCursor')) > 9) {
+        Session.set('wordCursor', Number(Session.get('wordCursor')) -10);
+       }
+      },
+     'click .next ':function(evt, tmpl){
+        Session.set('wordCursor', Number(Session.get('wordCursor')) +10);
+      },
     'click .addWord':function(evt, tmpl){
       Session.set('editing_word', false);
       clearWordForm();
       mySetText('wprompt', "Adding Word Group");
+      
+      var campi = document.getElementById("campaignsTop").selectedIndex;
+      var campval = document.getElementById("campaignsTop").options[campi].value;      
+
+      campAddTo(campval);
+      campRender();     
     }, 
     'click .save':function(evt, tmpl) {
       var word = myGetText('word');
@@ -631,7 +751,7 @@ if (Meteor.isClient) {
       var enableaudio = myGetButton('wenableaudio');
       var url = myGetButton('wurl');
       
-      var campaign = myGetText('wcampaign');
+      var campaign = myGetText('wcampaignids');
                
      if (Session.get('editing_word')) {
 
@@ -651,7 +771,7 @@ if (Meteor.isClient) {
         if (res) {
           if (res.word == word) {
             myRedAlert("Words cannot be duplicated");
-            return;
+            return;c1
           }         
         }
         
@@ -708,7 +828,6 @@ if (Meteor.isClient) {
       }
     },
     'click .addStudent':function(evt, tmpl){
-      alert('.addstudent');
       myClearAlert();
     },
     'click .addcampaign':function(evt, tmpl){
@@ -770,16 +889,24 @@ if (Meteor.isClient) {
     }
     
     //
-    //Render all Campaign names on Screen for this Word Group
+    // Render all Campaign names on Screen for this Word Group
+    // If Library not there, add it
     var campRender = function() {
       var campList = myGetText('wcampaignids');
+      var idForLibrary = getCampaignID('Library');
+    
+      if (campList == null) {
+        campList = "";
+      }
+      
+      if (campList.contains(idForLibrary) == false) {
+        campList = idForLibrary +  "," + campList;
+        myConsoleLog("Found ID For Library camplist " + campList);
+      }
+      
+      mySetText('wcampaignids', campList);
       
       myConsoleLog("Pre Render campaign ids  " + campList);
-      
-      if (campList == null) {
-        mySetText('wcampaign', "");
-        return;
-      }
       
       var campListArray = campList.split(',');
       var campNameList = "";
@@ -799,7 +926,8 @@ if (Meteor.isClient) {
      //JAVASCRIPT FOR Campaigns         JAVASCRIPT FOR Campaigns          JAVASCRIPT FOR Campaigns
      //JAVASCRIPT FOR Campaigns         JAVASCRIPT FOR Campaigns          JAVASCRIPT FOR Campaigns
      //JAVASCRIPT FOR Campaigns         JAVASCRIPT FOR Campaigns          JAVASCRIPT FOR Campaigns     
-     //JAVASCRIPT FOR Campaigns         JAVASCRIPT FOR Campaigns          JAVASCRIPT FOR Campaigns 
+     //JAVASCRIPT FOR Campaigns         JAVASCRIPT FOR Campaigns          JAVASCRIPT FOR Campaigns
+     
  //
  // Get Campaign Name from DB Campaign Table
     var getCampaignName = function(campaignID){
@@ -815,11 +943,30 @@ if (Meteor.isClient) {
       var campaign = Campaigns.findOne({_id:campaignID});
       
       myConsoleLog("getCampaignName return " + campaign.campaign);
-      return campaign.campaign;
-      
-     
+      return campaign.campaign;    
+    }
+
+//
+// Get Campaign Id From Campaign Name
+   var getCampaignID = function(campaignName){
+    
+    if (campaignName == null) {
+      return "";
     }
     
+    if (campaignName == "") {
+      return "";
+    }
+    
+    var campaign = Campaigns.findOne({campaign:campaignName});
+    
+    if ((campaign == null) || (campaign == "")) {
+      return "";
+    }
+    
+    return campaign._id;
+    
+   }
   
    var clearCampaignForm = function() {
       myClearText('ccampaign');
@@ -847,7 +994,7 @@ if (Meteor.isClient) {
     
     
     
- // Add New Word Group to Database
+ // Add New Campaign to Database
  //
     var addCampaign = function(campaign, keyword, csequencetext, imessage, monactive, tueactive, wedactive,
                         thuactive, friactive, satactive, sunactive, sendtime, studentactive, sendcount, sendaftercount,
@@ -858,7 +1005,7 @@ if (Meteor.isClient) {
     }
     
     Campaigns.insert({campaign:campaign, keyword:keyword, 
-                     csequencetext:csequencetext, imessage:imessage, monactive:monactive, tueactive:tueactive,
+                     csequencetext:csequencetext, imessage:imessage, monactivec11:monactive, tueactive:tueactive,
                      wedactive:wedactive, thuactive:thuactive, friactive:friactive, satactive:satactive,
                      sunactive:sunactive, sendtime:sendtime, studentactive:studentactive, sendcount:sendcount,
                      sendaftercount:sendaftercount, xdate:xdate, xdatelist:xdatelist                    
@@ -895,10 +1042,89 @@ if (Meteor.isClient) {
     document.getElementById('highlight').innerHTML  = "";
   }
   
-  //  Read WordGroup from database and fill display
+  
+  //Return ACTIVE or NOT ACTIVE
+  var isActive = function (state) {
+    if (state == true) {
+      return "ACTIVE";
+    } else {
+      return "INACTIVE";
+    }
+    return "INACTIVE";
+  }
+  // Build SequenceText for Campaign Number
+  var buildSequenceBlock = function(thisCampaign){
+    var returnBlock = "";
+    
+      var wlist = Words.find({}, {sort:{'seqnum' :1}});
+      
+       wlist.forEach(function(wgroup) {
+         var c = wgroup.campaign;
+         if ((c == null) || (c =="")) {
+    
+         } else {
+           myConsoleLog("word = "  +  wgroup.word  +    "c = " + c + "this campaign" + thisCampaign);
+           
+           if (wgroup.campaign.contains(thisCampaign)) {
+            returnBlock = returnBlock + "\r\n Word Group:  " + wgroup.word + "          Points: " + wgroup.points;
+            returnBlock = returnBlock + "\r\n      Instruction:  " + wgroup.instruction; 
+            returnBlock = returnBlock + "\r\n          Use 1:  " + wgroup.use1;
+            returnBlock = returnBlock + "\r\n          Use 2:  " + wgroup.use2;
+            returnBlock = returnBlock + "\r\n          Use 3:  " + wgroup.use3;
+            returnBlock = returnBlock + "\r\n      Question:  " + wgroup.question;
+            returnBlock = returnBlock + "\r\n             ans 1:  "  + wgroup.ans1 + "          " + wgroup.active1;
+            returnBlock = returnBlock + "\r\n             ans 2:  "  + wgroup.ans2 + "          " + wgroup.active2;            
+            returnBlock = returnBlock + "\r\n             ans 3:  "  + wgroup.ans3 + "          " + wgroup.active3;
+            returnBlock = returnBlock + "\r\n             ans 4:  "  + wgroup.ans4 + "          " + wgroup.active4;
+            returnBlock = returnBlock + "\r\n             ans 5:  "  + wgroup.ans5 + "          " + wgroup.active5;
+            returnBlock = returnBlock + "\r\n      Remediation if Correct:    " + wgroup.remedifcorrect;
+            returnBlock = returnBlock + "\r\n      Remediation if Incorrect:  " + wgroup.remedifwrong;     
+            
+            returnBlock +="\r\n";
+           } 
+        }
+
+      });
+      return returnBlock;
+    
+    
+  }
+  
+  //  Read Campaign from database and fill display
   var displayCampaignFromDB = function(id){
           
       var campaign = Campaigns.findOne({_id:id});
+            
+      mySetText('ccampaign',campaign.campaign);
+      mySetText('ckeyword', campaign.keyword);
+      
+
+      document.getElementById('csequencetext').innerHTML = buildSequenceBlock(campaign._id);
+      mySetText('imessage', campaign.imessage);
+           
+      mySetButton('monactive', campaign.monactive);
+      mySetButton('tueactive', campaign.tueactive);
+      mySetButton('wedactive',campaign.wedactive);
+      mySetButton('thuactive', campaign.thuactive);
+      mySetButton('friactive', campaign.friactive);
+      mySetButton('satactive', campaign.satactive);
+      mySetButton('sunactive', campaign.sunactive);
+      mySetText('sendtime', campaign.sendtime);
+      mySetButton('studentactive', campaign.studentactive);
+      mySetText('sendcount', campaign.sendcount);
+      mySetText('sendaftercount', campaign.sendaftercount);
+      mySetText('xdate', campaign.xdate);
+      mySetText('xdatelist', campaign.xdatelist);          
+  }
+ 
+   //  Search Campaign from database and fill display
+  var searchCampaignFromDB = function(camp){
+          
+      var campaign = Campaigns.findOne({campaign:camp});
+      
+      if (campaign == null) {
+        return false;
+      }
             
       mySetText('ccampaign',campaign.campaign);
       mySetText('ckeyword', campaign.keyword);
@@ -917,8 +1143,13 @@ if (Meteor.isClient) {
       mySetText('sendcount', campaign.sendcount);
       mySetText('sendaftercount', campaign.sendaftercount);
       mySetText('xdate', campaign.xdate);
-      mySetText('xdatelist', campaign.xdatelist);          
+      mySetText('xdatelist', campaign.xdatelist);
+      
+      return campaign._id;
   }
+   
+  
+  
     
   Template.campaigns.nextCampaign = function() {
     return (Number(Session.get('campaignCursor')) + 10) + " - " + (Number(Session.get('campaignCursor')) + 20);
@@ -937,10 +1168,12 @@ if (Meteor.isClient) {
   }
   
   Template.campaigns.campaignList = function() {
-  //  return Campaigns.find({}, {sort:{'campaign' :1}});
-      return Campaigns.find({});
+      return Campaigns.find({} , {limit:10});
   }
-    
+  
+  Template.campaigns.campaignListFull = function() {
+    return Campaigns.find({}); 
+  }
   Template.campaignRow.events({
     'dblclick .campaignRow':function(evt, tmpl){
       setHighLight(tmpl.data._id);
@@ -966,6 +1199,19 @@ if (Meteor.isClient) {
     },
     'click .next ':function(evt, tmpl){
         Session.set('campaignCursor', Number(Session.get('campaignCursor')) +10);
+    },
+    'click .campaignSearch ':function(evt, tmpl){
+        var campToFind = myGetText('campString');
+        clearCampaignForm();
+        var id = searchCampaignFromDB(campToFind);
+        
+        if (id == false) {
+             myRedAlert('Campaign Not Found');
+        } else {
+            Session.set('editing_campaign', id);
+            mySetText('cprompt', "Editing Campaign");
+            setHighLight(id);
+        };
     },    
     'click .save':function(evt, tmpl) {
       var campaign = myGetText('ccampaign');
@@ -1096,10 +1342,6 @@ if (Meteor.isClient) {
    'click .seqmsgclear':function(evt, tmpl) {
       mySetText('csequencetext', "");
     },
-   'keydown .searchstring':function(evt, tmpl) {
-      alert("Search String");
-    },
-    
    'click .close':function(evt, tmpl) {
     },
   })

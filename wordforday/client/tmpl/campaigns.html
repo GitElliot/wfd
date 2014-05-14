@@ -31,10 +31,14 @@
         <div id="status" class="cstatus" width="1000px">&nbsp; </div>      
     
     <div width="200px">
+	&nbsp;&nbsp;
          <a href="#" class="btn btn-success addCampaign" id="addCampaign">Add Campaign</a>
          <div class="wprompt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
          <label id="cprompt" class="wprompt">Add Campaign</label>
-	 &nbsp;&nbsp;&nbsp;Search String&nbsp;<input type="text" id="searchString" class="searchstring">
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	 
+	 &nbsp;<input type="text" id="campString" class="searchstring">
+	 <a href="#" class="btn btn-success campaignSearch" >Campaign Search</a>
     </div>     
      
      <table class="wgBothSides" width="1000px"  height="400px">
@@ -103,46 +107,25 @@
     <div id="collapseOne" class="accordion-body collapse">
       <div class="accordion-inner">
 	
-	<table>
-	    <tr>
-		<td>
-		      <textarea readonly rows="12" cols="95" id="csequencetext" ></textarea>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		                                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		</td>
-		
-		<td>
-		    <div class="TestDetail">
-                          <br> <br>
-			   <b>Insert Message After...</b>
-				<div class="sendBlock">
-			          &nbsp;&nbsp;
-			           <br>
-			          &nbsp;&nbsp;Message &nbsp;<input type="text" class="imessage tbh" name="imessage" value="{{campaign.imessage}}" id="imessage">
-			          &nbsp;&nbsp;&nbsp;
-			          <br>
-			        <div class="center">
+    <div class="sequenceDetail">	
+	 <textarea class="sequenceDetail"  cols=1000 rows=10 id="csequencetext" ></textarea>
+    </div>
+    <br>
+	
+   <b>Insert Message After...</b>
+   
+   <br><input type="text" class="imessage" name="imessage" value="{{campaign.imessage}}" id="imessage">
+
+			        <div>
 				    &nbsp; &nbsp; &nbsp; &nbsp;
 				    
 			            <a href="#" class="btn btn-success seqmsgremove" >Remove</a>
 				    &nbsp; &nbsp; 
 			            <a href="#" class="btn btn-success seqmsginsert" >Insert</a>
 				    &nbsp; &nbsp;				    
-			            <a href="#" class="btn btn-success seqmsgclear" >Clear All</a>
-
-				    
 				    <br>
 				   &nbsp;	
 				</div>		    
-			    </div>	   
-		    </div>
-		</td>
-	    </tr>
-	    
-	    
-	    
-	</table>
-	
-
 
       </div>
     </div>

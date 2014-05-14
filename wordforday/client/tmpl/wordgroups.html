@@ -34,16 +34,21 @@
     <p hidden id="highlight"></p>
     <p hidden id="wcampaignids"></p>    
     
-    <div width="200px">
-         <a href="#" class="btn btn-success addWord" id="addWord">Add Word Group</a>
+    <div width="300px">
+         &nbsp;&nbsp;&nbsp;
+         <a href="#" class="btn btn-success addWord" id="addWord">&nbsp;&nbsp;Add Word Group</a>
          <div class="wprompt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
          <label id="wprompt" class="wprompt">Add Word Group</label>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         &nbsp;<input type="text" id="wordSearchString" class="wordSearchString">
+	 <a href="#" class="btn btn-success wordSearch" >Word Group Search</a>
     </div>     
      
      
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Campaign
 <select name="campaigns" id="campaignsTop">
-                   <option value="All">Library</option>
 		    {{#each campaignList}}
 			{{>campaignRow2}}
 		    {{/each}}
@@ -55,7 +60,7 @@
      <table class="wgBothSides" width="1000px"  height="200px">
 	<tr>
 	    <td align="top" width="1000px">
-		<div style="height:500px;width:180px; overflow: auto" >
+		<div style="height:500px;width:200px; overflow: auto" >
 	      <table class="table table-bordered table-striped wordTable">
 		<thead>
 		    <tr>		
@@ -71,11 +76,16 @@
 		    {{/each}}
 		</tbody>
 	
-	    </table>                  
+	    </table>
+         <ul class="pager">
+          <li class="previous"><a href="#">&larr; {{prevWord}}</a></li>
+          <li class="next"><a href="#">{{nextWord}} &rarr;</a></li>
+        </ul>             
+              
 		</div>
 	    </td>
 	      	    
-	    <td class="right2" align="top" width="800px">  <!--  Top Right -->
+	    <td class="right2" align="top" width="780px">  <!--  Top Right -->
 		   
 		 &nbsp;
 		 Word&nbsp;<input type="text" class="word_input" name="word" value="{{word.word}}" id="word">

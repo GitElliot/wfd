@@ -1,4 +1,5 @@
 <template name="students">
+     <p hidden id="highlight"></p>     
     <div class="top-block">
 	
     <table class="menu">
@@ -33,6 +34,10 @@
          <a href="#" class="btn btn-success addStudent sprompt" id="addStudent" >Add Student</a>
          <div class="sprompt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
          <label id="sprompt" class="sprompt">Add Student</label>
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	 
+	 &nbsp;<input type="text" id="studentString" class="studentstring">
+	 <a href="#" class="btn btn-success studentSearch" >Cell Number Search</a>         
     </div>     
     <br>
   
@@ -150,7 +155,7 @@
 
 <template name="studentRow">
     <tr class="studentRow">
-        <td>{{cell}}</td> <td>{{name}}</td>
+        <td id="{{_id}}">{{cell}}</td> <td>{{name}}</td>
     </tr>
 </template>
 
@@ -188,7 +193,7 @@
                  Login
                 </td>
                 <td>
-                  <input type="text" class="login" name="login" value="{{student.login}}" id="sid">
+                  <input type="text" class="login" name="login" value="{{student.login}}" id="login">
                 </td>
               </tr>
               <tr>

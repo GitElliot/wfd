@@ -23,17 +23,13 @@
 }
 
 .sendBlock {
-    float:center;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
 }
 
 .tbh {
-    font-size: 10px;
-    line-height: 5;
-    height: 10px;
-    background-color: #CCCCFF;
+
 }
 
 .addCampaign {
@@ -47,11 +43,16 @@
 }
 
 
-.TestDetail {
-    float:left;
+.sequenceDetail {
+    border-style:  solid;
+    border-width:1px;
+    width:650px;
+    height:250px;    
 }
 
-
+.imessage {
+    width:600px
+}
 .campaign {
     width: 250px;
 }

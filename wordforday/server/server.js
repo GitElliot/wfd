@@ -20,17 +20,12 @@
       })
            
       Meteor.publish("words", function(wordCursor){
-         return Words.find({}, {sort:{'seqnum' :1}});  
+         return Words.find({}, {sort:{'seqnum' :1}, skip:wordCursor});  
       })
       
-      Meteor.publish("campaigns", function(campaignCursor){
-        return Campaigns.find({}, {sort:{'campaign' :1}, limit:10, skip:campaignCursor});
-//         var search = "{'campaign':/.*c1.*/}";
-//         var search = "{}";
-//         
-//         return Campaigns.find(search, {sort:{'campaign' :1}, limit:10, skip:campaignCursor});      
+      Meteor.publish("campaigns", function(campaignCursor){             
+        return Campaigns.find({}, {sort:{'campaign' :1},  skip:campaignCursor}); 
       })
-      
       
       
       Accounts.validateNewUser(function(options, user) {
