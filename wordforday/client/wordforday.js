@@ -77,11 +77,13 @@ if (Meteor.isClient) {
       mySetText('sprompt', "Adding Student");
     },
     'click .previous ':function(evt, tmpl){
+      document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone
       if (Number(Session.get('studentCursor')) > 9) {
         Session.set('studentCursor', Number(Session.get('studentCursor')) -10);
       }
     },
     'click .next ':function(evt, tmpl){
+        document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone      
         Session.set('studentCursor', Number(Session.get('studentCursor')) +10);
     }
   })
@@ -1196,11 +1198,13 @@ if (Meteor.isClient) {
       mySetText('cprompt', "Adding Campaign");
     },
     'click .previous ':function(evt, tmpl){
+      document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone      
       if (Number(Session.get('campaignCursor')) > 9) {
         Session.set('campaignCursor', Number(Session.get('campaignCursor')) -10);
       }
     },
     'click .next ':function(evt, tmpl){
+        document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone      
         Session.set('campaignCursor', Number(Session.get('campaignCursor')) +10);
     },
     'click .campaignSearch ':function(evt, tmpl){
