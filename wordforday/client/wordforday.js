@@ -421,7 +421,7 @@ if (Meteor.isClient) {
       var found = false;
       
       var i = 0;  
-      wlist.forEach(function(wgroup) { 
+      wlist.forEach(function(wgroup) {     
         
         if (found == false) {
           if (currentSeq == wgroup.seqnum) {
@@ -649,7 +649,7 @@ if (Meteor.isClient) {
   
   Template.wordgroups.wordList = function() {
     
-   return Words.find({}, {sort:{'seqnum' :1}, limit:10});
+   return Words.find({}, {sort:{'seqnum' :1}, limit:10, skip:Session.get('wordCursor')});
   
   }
   
@@ -661,7 +661,8 @@ if (Meteor.isClient) {
     
   Template.wordRow.events({
     'dblclick .wordRow':function(evt, tmpl){
-      
+  
+           
       setHighLight(tmpl.data._id);
 
       Session.set('editing_word', tmpl.data._id);
@@ -699,11 +700,13 @@ if (Meteor.isClient) {
         };
       },
      'click .previous ':function(evt, tmpl){
-      if (Number(Session.get('wordCursor')) > 9) {
+        document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone
+        if (Number(Session.get('wordCursor')) > 9) {
         Session.set('wordCursor', Number(Session.get('wordCursor')) -10);
        }
       },
      'click .next ':function(evt, tmpl){
+        document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone
         Session.set('wordCursor', Number(Session.get('wordCursor')) +10);
       },
     'click .addWord':function(evt, tmpl){
@@ -1282,7 +1285,12 @@ if (Meteor.isClient) {
       myClearAlert();
     },
     'click .remove':function(evt, tmpl) {
-      removeCampaign();
+
+      var a =  confirm("Active Campaigns should not be removed, are you sure?");
+      if (a == true) {
+        removeCampaign();
+      }
+      
       Session.set('editing_campaign', false);
       mySetText('cprompt', "Add Campaign");       
       clearCampaignForm();

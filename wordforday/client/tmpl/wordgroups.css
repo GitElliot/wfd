@@ -92,8 +92,6 @@
 
 .wordCol1 {
     width: 70%;
-    overflow-x:hidden;
-    break-inside: always;
 }
 
 .wordCol2 {

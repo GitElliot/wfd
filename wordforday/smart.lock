@@ -2,13 +2,19 @@
   "meteor": {},
   "dependencies": {
     "basePackages": {
-      "router": {}
+      "router": {},
+      "bootstrap3-less": {}
     },
     "packages": {
       "router": {
         "git": "https://github.com/tmeasday/meteor-router.git",
-        "tag": "v0.6.0",
-        "commit": "1e2860138402fb288c2fbce70338161f4d86a5d4"
+        "tag": "v0.6.1",
+        "commit": "8ec75fec7affdefc787d19f23b36fd6d1d44ef04"
+      },
+      "bootstrap3-less": {
+        "git": "https://github.com/eprochasson/bootstrap3-less",
+        "tag": "v0.1.9",
+        "commit": "5c812c4d7ce72917a065f0424c3cf54e5ff2d16a"
       },
       "page-js-ie-support": {
         "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",
@@ -17,8 +23,8 @@
       },
       "HTML5-History-API": {
         "git": "https://github.com/tmeasday/meteor-HTML5-History-API.git",
-        "tag": "v4.0.0",
-        "commit": "dc4965f1424cfca625ec3fbea17eace03f8e32c5"
+        "tag": "v4.1.2",
+        "commit": "b5fca79f9ae8936e5f748a04f475295f4fa1cc7a"
       }
     }
   }
