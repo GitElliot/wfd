@@ -3,16 +3,19 @@
 import datetime
 import pymongo
 
-import httplib
-import urllib
+import httplib2
+from httplib2 import *
 
-atextURL = "api.atext.com"
+import urllib
+import requests
+
+atextURL = "http://api.atext.com"
 atextPort = 80
 
 
 message1 = "/v2/0fffc340-8b99-0131-2454-40404d31061b/program/variables"
 message2 = "/v1/0fffc340-8b99-0131-2454-40404d31061b/notify"
-message3 = "/v1/0fffc340-8b99-0131-2454-40404d31061b/notify"
+
 message4 = "/v1/0fffc340-8b99-0131-2454-40404d31061b/broadcast"
 message5 = "/v1/0fffc340-8b99-0131-2454-40404d31061b/kick"
 
@@ -20,74 +23,31 @@ message6 = "/v2/0fffc340-8b99-0131-2454-40404d31061b/program/subscribers"
 
 key = "0fffc340-8b99-0131-2454-40404d31061b"
 
-def getSubscribers():
-    conn = httplib.HTTPConnection(atextURL)
-    conn.request("GET", message6)
-    r1 = conn.getresponse();
-    
-    print r1.status
-    print r1.reason
-    print r.content
-    
+def getSubscribers():      
+    m = atextURL + message6
+    r = requests.get(m)
+    print r.content  
     return
 
-
-
-def atextSend():
+def sendSMS(cell, message):
+    cell = cell.replace("-","")
+    m = atextURL + message2
+    payload = {'number' : cell, 'message' : message}  
+    r = requests.post(m, data=payload)
+    return r.text
     
-    #conn = httplib.HTTPConnection(atextURL, atextPort)
-    #conn.connect()
-    #
-    #request = conn.putrequest('POST', message1)
-    #
-    #headers = {}
-    #conn.send()
-    #
-    #resp = conn.getresponse()
-    #print resp.status
-    #print resp.read()
-    
-    conn = httplib.HTTPConnection(atextURL)
-    conn.request("GET", message1)
-    r1 = conn.getresponse();
-    
-    print r1.status
-    print r1.reason
-    print r1
-    
+def sendTest():   
+    payload = {'number' : '7329798073', 'message' : 'Testing 123 321 '}
+    m = atextURL + message4
+    r = requests.post(m, data=payload)
     return
-    
-def atextPost():
-
-#    params = urllib.urlencode( {"We've got trouble!"})
-#    parms2 = {'number' : '7329798073', 'message':'We got trouble'};
-#   parms2 = {'7329798073','We got trouble'};
-    
-#    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-#    conn = httplib.HTTPConnection("api.atext.com:80")
-
-#     conn.request("POST", message3 , params2, headers)
-     
-#    conn.request("POST", message3 , params2)
-
-    parms2 = {'number' : '7329798073', 'message':'Friday Message'};
-    parms = urllib.urlencode(parms2)
-    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("api.atext.com:80")
-    conn.request("POST", message5, param, headers);
-
-
-    response = conn.getresponse()
-    print response.status, response.reason
-
-    data = response.read()
-    conn.close()
-    
-    return
-    
+   
     
 print "ATEXT TEST"
-atextSend()
+getSubscribers()
+
+#retVal = sendSMS("7329798073", "Word for Day Test")
+#print retVal
 
 print "ATEXT TEST DONE"
 

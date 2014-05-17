@@ -45,7 +45,7 @@
   
   <table class="bothSides" width="1000px"  height="200px">
     <tr>
-    <td class="left1" align="top" width="350px">
+    <td class="left1" align="top" width="325px">
             
     <div class="container-fluid">   
         <div class="row-fluid">
@@ -53,7 +53,7 @@
             <table class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
-                        <th class="head1" >Cell Number</th>
+                        <th width="100px" class="head1" >Cell Number</th>
                         <th class="head1" >Name</th>
                     </tr>
                 </thead>                  
@@ -75,23 +75,18 @@
    </div>  <!-- End div class=container-fluid-->           
    </td>  <!--end td left Side -->
         
-    <td class="right1" align="top" width="595px">
+    <td class="right1" align="top" width="650px">
             
    
    <div class="accordion" id="accordion2">
     
   <div class="accordion-group">
     <div class="accordion-heading head1">
-      
-           
-
+                
       <a class="accordion-toggle head1" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
          Student Information
-     
       </a>
-        
-    
-      
+          
     </div> 
     <div id="collapseOne" class="accordion-body collapse in">
       <div class="accordion-inner">
@@ -231,17 +226,18 @@
                 <option value="Group 3">3</option>
               </select>
               
-              
- <br>
-  
-              Campaign
-              <select class="sel-campaign" id="sel-campaign">
-                <option value="Campaign 1">1</option>
-                <option value="Campaign 2"> 2</option>
-                <option value="Campaign 3">3</option>
-              </select>
-              
- <br>            
+              <br>
+              <br>
+              Select Campaign for Student
+	      <br>
+               <select class="selCampaign" name="campaigns" id="selCampaign">
+		    {{#each campaignListFull}}
+			{{>campaignRow2}}
+		    {{/each}}
+               </select>
+	       <br>
+	      <input readonly type="text" class="scampaign" name="scampaign" value="{{student.scampaign}}" id="scampaign">
+	       <br>
             </div>
             </div>   <!--End of Container -->
 

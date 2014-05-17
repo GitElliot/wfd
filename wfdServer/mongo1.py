@@ -6,6 +6,9 @@ from pymongo import Connection
 from pymongo import database
 
 from campaign  import *
+from Students  import *
+from atext import *
+from WordGroups import *
 
 
 # These items need to be moved to a config file
@@ -43,6 +46,34 @@ def getWords():
 print "HELLO WORLD"
 
 # getWords()
-getActiveCampaigns(dbHostName, dbPortNumber)
+activeCampaignList = []
+activeCampaignList = getActiveCampaigns(dbHostName, dbPortNumber)
+print activeCampaignList[0]
+
+activeStudentList = getActiveStudents(dbHostName, dbPortNumber, activeCampaignList[0])
+
+activeWordList = []
+activeWordList = getActiveWordList(dbHostName, dbPortNumber, activeCampaignList[0])
+
+i = 0
+print "Send word  group " + activeWordList[i] + "  to student " + activeStudentList[i]
+
+#sendSMS(activeStudentList[i], activeWordList[i])
+
+#
+# Get WordGroup from DB to send
+thisWordGroup = getActiveWord(dbHostName, dbPortNumber, activeWordList[i])
+
+print "Length " + str(len(thisWordGroup))
+
+if (len(thisWordGroup) > 0):
+    sendSMS(activeStudentList[i], thisWordGroup[0])
+    sendSMS(activeStudentList[i], thisWordGroup[1])
+    sendSMS(activeStudentList[i], thisWordGroup[2])           
+    sendSMS(activeStudentList[i], thisWordGroup[3])            
+
+# sendSMSWordGroup(activeStudentList[i], activeWordList[i], instruction, use1, use2, use3)
+
+
 print "Done"
 

@@ -99,7 +99,12 @@ if (Meteor.isClient) {
       mySetText('pword', student.pword);
       $('.sel-timez').val(student.tzoffset)
       mySetButton('allowaudio', student.allowaudio);
-      setHighLight(tmpl.data._id);     
+      setHighLight(tmpl.data._id);
+      
+      if (student.campaign == null) {  // Added later, may be null
+        student.campaign = "";
+      }
+      mySetText('scampaign', getCampaignName(student.campaign))
       myClearAlert();
 
     }
@@ -111,6 +116,10 @@ if (Meteor.isClient) {
   
   Template.students.studentList = function() {
      return Students.find({});
+  }
+  
+  Template.studentUpdateForm.campaignListFull = function() {
+    return Campaigns.find({}); 
   }
   
   
@@ -129,16 +138,18 @@ if (Meteor.isClient) {
         };          
     },
     'click .save':function(evt, tmpl) {
-      var cell = tmpl.find('.cell').value.trim();
-      var name = tmpl.find('.name').value;
-      var login = tmpl.find('.login').value;
-      var pword = tmpl.find('.pword').value;  
+      var cell = myGetText('cell').trim();
+      var name = myGetText('name').trim();
+      var login = myGetText('login').trim();
+      var pword = myGetText('pword').value;  
       var tzoffset = tmpl.find('.sel-timez').value;
-      var allowaudio = tmpl.find('.allowaudio').checked;
+      var allowaudio = myGetButton('allowaudio');
+      
+      var campaign = getCampaignID(myGetText('scampaign'));
       var success = false;
       
      if (Session.get('editing_student')) {
-        success = updateStudent(cell, name, login, pword, tzoffset, allowaudio)
+        success = updateStudent(cell, name, login, pword, tzoffset, allowaudio, campaign)
         if (success == false) {
           return;
         }
@@ -146,7 +157,7 @@ if (Meteor.isClient) {
         mySetText('sprompt', 'Add Student');
         clearForm();
       } else {
-        success = addStudent(cell, name, login, pword, tzoffset, allowaudio);
+        success = addStudent(cell, name, login, pword, tzoffset, allowaudio, campaign);
         if (success == false) {
           return;
         myAlert("Student Added");
@@ -171,6 +182,13 @@ if (Meteor.isClient) {
     },
     'click .close':function(evt, tmpl) {
       mySetText('sprompt', "Add Student");
+    },    
+    'click .selCampaign':function(evt, tmpl) {
+      var campi = document.getElementById("selCampaign").selectedIndex;
+      var campaignId = document.getElementById("selCampaign").options[campi].value;
+      var campaign = getCampaignName(campaignId);
+      mySetText('scampaign', campaign);
+      // Campaign has changed -- reset it
     },
     'click .addStudent':function(evt, tmpl){
   
@@ -197,11 +215,12 @@ if (Meteor.isClient) {
       mySetText('pword', student.pword);
       $('.sel-timez').val(student.tzoffset);
       mySetButton('allowaudio', student.allowaudio);
+      mySetText('scampaign', getCampaignName(student.campaign));
       return student._id;
     
   }
   
-  var addStudent = function(ncell, name, login, pword, tzoffset, allowaudio) {
+  var addStudent = function(ncell, name, login, pword, tzoffset, allowaudio, campaign) {
     if (ncell.length == 0) {
       myRedAlert("Cell number is required");
       return false;
@@ -219,14 +238,15 @@ if (Meteor.isClient) {
       return false;
     }
     
-    Students.insert({cell:ncell, name:name, login:login, pword:pword, tzoffset:tzoffset, allowaudio:allowaudio});
+    Students.insert({cell:ncell, name:name, login:login, pword:pword, tzoffset:tzoffset,
+                    allowaudio:allowaudio, campaign:campaign});
     
     myAlert("Student Inserted");
     return true;
       
   }
   
-  var updateStudent = function(cell, name, login, pword, tzoffset, allowaudio) {
+  var updateStudent = function(cell, name, login, pword, tzoffset, allowaudio, campaign) {
     
     if (cell.length == 0) {
       myRedAlert("Cell number is required");
@@ -238,7 +258,8 @@ if (Meteor.isClient) {
       return false;
     }    
     
-    Students.update(Session.get('editing_student'), {$set: {cell:cell, name:name, login:login, pword:pword, tzoffset:tzoffset, allowaudio:allowaudio}}); 
+    Students.update(Session.get('editing_student'), {$set: {cell:cell, name:name, login:login, pword:pword,
+                    tzoffset:tzoffset, allowaudio:allowaudio, campaign:campaign}}); 
     return true;
   }
   var clearForm = function() {
@@ -248,6 +269,7 @@ if (Meteor.isClient) {
     mySetText('pword', "");
     $('.sel-timez').val(-5)
     mySetButton('allowaudio',false);
+    mySetText('scampaign', "");
     return;
   }
   
@@ -1179,6 +1201,7 @@ if (Meteor.isClient) {
   Template.campaigns.campaignListFull = function() {
     return Campaigns.find({}); 
   }
+  
   Template.campaignRow.events({
     'dblclick .campaignRow':function(evt, tmpl){
       setHighLight(tmpl.data._id);
