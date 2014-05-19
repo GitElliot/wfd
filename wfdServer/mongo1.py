@@ -17,12 +17,7 @@ dbHostName = "localhost"
 dbPortNumber =  3001
 
 
-def fib(n):
-    a, b = 0, 1
-    while b < n :
-        print b,
-        a, b = b, a+b
-        
+       
         
 
 def getWords():
@@ -67,8 +62,6 @@ logLine =  localtime + " Send word  group <<" + activeWordList[wi] + ">>  to stu
 print logLine
 studentAddLogLine(dbHostName, dbPortNumber, activeStudentList[si], logLine)
 
-
-
 #sendSMS(activeStudentList[i], activeWordList[i])
 
 #
@@ -87,8 +80,4 @@ if (len(thisWordGroup) > 0):
     retVal = sendSMS(activeStudentList[i], thisWordGroup[3])
     print retVal
 
-# sendSMSWordGroup(activeStudentList[i], activeWordList[i], instruction, use1, use2, use3)
-
-
-print "Done"
 
