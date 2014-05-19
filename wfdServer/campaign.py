@@ -7,7 +7,6 @@ from pymongo import database
 
 
 def activeToday(camp, dayNumber):   
-
     
     if dayNumber == 0:
         return camp['monactive']
@@ -52,13 +51,19 @@ def getActiveCampaigns(dbHostName, dbPortNumber):
     activeCampaignList = []
 #    print "Active Campaign List"
     
+        
     for camp in db.campaigns.find().sort("campaign", pymongo.ASCENDING):
-                  
-        if activeToday(camp, dayNumber):
-#            print camp['campaign']  + "   "                
-#            print " IS Active"
-            activeCampaignList.append(camp['_id'])
- 
+        
+        try:
+            if activeToday(camp, dayNumber):
+                print camp['campaign']  + "   "                
+                print " IS Active"
+                activeCampaignList.append(camp['_id'])            
+                       
+        except:
+                print "Exception in calling activeToday()"
+            
+            
     connection.close();            
     return activeCampaignList    
 

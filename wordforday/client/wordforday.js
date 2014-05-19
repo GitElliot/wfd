@@ -105,6 +105,12 @@ if (Meteor.isClient) {
         student.campaign = "";
       }
       mySetText('scampaign', getCampaignName(student.campaign))
+      
+      if (student.studentStatus == null ) {  // added later, may be null
+        student.studentStatus == "";
+      }
+      
+      mySetText('studentStatus', student.studentStatus);
       myClearAlert();
 
     }
@@ -141,15 +147,16 @@ if (Meteor.isClient) {
       var cell = myGetText('cell').trim();
       var name = myGetText('name').trim();
       var login = myGetText('login').trim();
-      var pword = myGetText('pword').value;  
+      var pword = myGetText('pword').trim();  
       var tzoffset = tmpl.find('.sel-timez').value;
       var allowaudio = myGetButton('allowaudio');
       
       var campaign = getCampaignID(myGetText('scampaign'));
+      var studentStatus = myGetText('studentStatus');
       var success = false;
       
      if (Session.get('editing_student')) {
-        success = updateStudent(cell, name, login, pword, tzoffset, allowaudio, campaign)
+        success = updateStudent(cell, name, login, pword, tzoffset, allowaudio, campaign, studentStatus)
         if (success == false) {
           return;
         }
@@ -157,7 +164,7 @@ if (Meteor.isClient) {
         mySetText('sprompt', 'Add Student');
         clearForm();
       } else {
-        success = addStudent(cell, name, login, pword, tzoffset, allowaudio, campaign);
+        success = addStudent(cell, name, login, pword, tzoffset, allowaudio, campaign, studentStatus);
         if (success == false) {
           return;
         myAlert("Student Added");
@@ -189,6 +196,10 @@ if (Meteor.isClient) {
       var campaign = getCampaignName(campaignId);
       mySetText('scampaign', campaign);
       // Campaign has changed -- reset it
+      var d = new Date();
+      d = d.toUTCString();
+      var status = "Campaign '" + campaign + "' Initiated  " + d + "\r\n"
+      mySetText("studentStatus", status);
     },
     'click .addStudent':function(evt, tmpl){
   
@@ -215,12 +226,25 @@ if (Meteor.isClient) {
       mySetText('pword', student.pword);
       $('.sel-timez').val(student.tzoffset);
       mySetButton('allowaudio', student.allowaudio);
+      
+      if (student.campaign == null) {     // added later,  could be null
+        student.campaign = "";
+      }
+      
       mySetText('scampaign', getCampaignName(student.campaign));
+      
+      if (student.studentStatus == null) {      // added later,  could be null
+        student.studentStatus = "";
+      }
+      
+      mySetText('studentStatus', student.studentStatus);
+      
+      
       return student._id;
     
   }
   
-  var addStudent = function(ncell, name, login, pword, tzoffset, allowaudio, campaign) {
+  var addStudent = function(ncell, name, login, pword, tzoffset, allowaudio, campaign, studentStatus) {
     if (ncell.length == 0) {
       myRedAlert("Cell number is required");
       return false;
@@ -239,14 +263,14 @@ if (Meteor.isClient) {
     }
     
     Students.insert({cell:ncell, name:name, login:login, pword:pword, tzoffset:tzoffset,
-                    allowaudio:allowaudio, campaign:campaign});
+                    allowaudio:allowaudio, campaign:campaign, studentStatus:studentStatus});
     
     myAlert("Student Inserted");
     return true;
       
   }
   
-  var updateStudent = function(cell, name, login, pword, tzoffset, allowaudio, campaign) {
+  var updateStudent = function(cell, name, login, pword, tzoffset, allowaudio, campaign,studentStatus) {
     
     if (cell.length == 0) {
       myRedAlert("Cell number is required");
@@ -259,7 +283,7 @@ if (Meteor.isClient) {
     }    
     
     Students.update(Session.get('editing_student'), {$set: {cell:cell, name:name, login:login, pword:pword,
-                    tzoffset:tzoffset, allowaudio:allowaudio, campaign:campaign}}); 
+                    tzoffset:tzoffset, allowaudio:allowaudio, campaign:campaign, studentStatus:studentStatus}}); 
     return true;
   }
   var clearForm = function() {
@@ -270,6 +294,7 @@ if (Meteor.isClient) {
     $('.sel-timez').val(-5)
     mySetButton('allowaudio',false);
     mySetText('scampaign', "");
+    mySetText('studentStatus');
     return;
   }
   

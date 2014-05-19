@@ -74,3 +74,10 @@
 .sel-groups {
     width:120px;
 }
+
+.studentStatus {
+    border-style:  solid;
+    border-width:1px;
+    width:600px;
+    height:250px;       
+}

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import datetime
+import time
 import pymongo
 from pymongo import Connection
 from pymongo import database
@@ -56,7 +57,17 @@ activeWordList = []
 activeWordList = getActiveWordList(dbHostName, dbPortNumber, activeCampaignList[0])
 
 i = 0
-print "Send word  group " + activeWordList[i] + "  to student " + activeStudentList[i]
+wi = 0
+si = 0
+
+localtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#print localtime
+
+logLine =  localtime + " Send word  group <<" + activeWordList[wi] + ">>  to student " + activeStudentList[si]
+print logLine
+studentAddLogLine(dbHostName, dbPortNumber, activeStudentList[si], logLine)
+
+
 
 #sendSMS(activeStudentList[i], activeWordList[i])
 
@@ -67,10 +78,14 @@ thisWordGroup = getActiveWord(dbHostName, dbPortNumber, activeWordList[i])
 print "Length " + str(len(thisWordGroup))
 
 if (len(thisWordGroup) > 0):
-    sendSMS(activeStudentList[i], thisWordGroup[0])
-    sendSMS(activeStudentList[i], thisWordGroup[1])
-    sendSMS(activeStudentList[i], thisWordGroup[2])           
-    sendSMS(activeStudentList[i], thisWordGroup[3])            
+    retVal = sendSMS(activeStudentList[i], thisWordGroup[0])
+    print retVal
+    retVal = sendSMS(activeStudentList[i], thisWordGroup[1])
+    print retVal
+    retVal = sendSMS(activeStudentList[i], thisWordGroup[2])
+    print retVal
+    retVal = sendSMS(activeStudentList[i], thisWordGroup[3])
+    print retVal
 
 # sendSMSWordGroup(activeStudentList[i], activeWordList[i], instruction, use1, use2, use3)
 
