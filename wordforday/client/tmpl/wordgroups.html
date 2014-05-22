@@ -37,31 +37,28 @@
     <div width="300px">
          &nbsp;&nbsp;&nbsp;
          <a href="#" class="btn btn-success addWord" id="addWord">&nbsp;&nbsp;Add Word Group</a>
-         <div class="wprompt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-         <label id="wprompt" class="wprompt">Add Word Group</label>
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-         &nbsp;<input type="text" id="wordSearchString" class="wordSearchString">
-	 <a href="#" class="btn btn-success wordSearch" >Word Group Search</a>
-    </div>     
-     
-     
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Campaign
-<select name="campaigns" id="campaignsTop">
+         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;Campaign
+         <select name="campaigns" id="campaignsTop" class="campaignsTop">
+		    {{#each campaignLibrary}}
+			{{>campaignRow1}}
+		    {{/each}}	  
+	  
 		    {{#each campaignList}}
 			{{>campaignRow2}}
 		    {{/each}}
-</select> 
-
-
+         </select>     	 
+	 
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	 <input type="text" id="wordSearchString" class="wordSearchString">
+	 <a href="#" class="btn btn-success wordSearch" >Word Group Search</a>
+    </div>     
      
-     
-     <table class="wgBothSides" width="1000px"  height="200px">
+     <table  class="wgBothSides" width="1000px" >
 	<tr>
-	    <td align="top" width="1000px">
-		<div style="height:500px;width:200px; overflow: auto" >
-	      <table class="table table-bordered table-striped wordTable">
+	    <td valign="top" width="1000px">
+		<div align="top" style="width:200px; overflow: auto" >
+	      <table align="top" class="table table-bordered table-striped wordTable">
 		<thead>
 		    <tr>		
 			<th class="head1 wordCol1" >Tag</th>
@@ -98,7 +95,8 @@
                  <input hide type="hidden" class="wseqnum" name="wseqnum" value="{{word.seqnum}}" id="wseqnum">		 
 	      <br>
 		&nbsp;
-		 Instruction&nbsp;<input type="text" class="winstruction" name="winstruction" value="{{word.instruction}}" id="winstruction">      
+		 Instruction&nbsp;<input type="text" class="winstruction" name="winstruction" value="{{word.instruction}}" id="winstruction">
+		  
 	    
   <div class="accordion" id="accordion2">
     
@@ -211,6 +209,10 @@
             <tr>
                 <td>
           <select name="campaignsBot" id="campaignsBot">
+		    {{#each campaignLibrary}}
+			{{>campaignRow1}}
+		    {{/each}}	    
+	    
 		    {{#each campaignList}}
 			{{>campaignRow2}}
 		    {{/each}}
@@ -276,7 +278,15 @@
 	<td id="{{_id}}" class="wordCol1">{{word}}</td>
 	<td class="enablewordshort wordCol2"><input id="B{{_id}}" type="checkbox" checked="{{active}}"></td>
     </tr>
-</template>  
+</template>
+
+<template name="campaignRow1">
+        <option value="{{_id}}"  selected>
+          {{campaign}}        
+        </option>
+
+</template>
+
 
 <template name="campaignRow2">
         <option value="{{_id}}">

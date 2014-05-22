@@ -21,7 +21,7 @@
            
       Meteor.publish("words", function(wordCursor){
 //       return Words.find({}, {sort:{'seqnum' :1}, skip:wordCursor});           
-         return Words.find({}, {sort:{'seqnum' :1}});  
+         return Words.find({}, {sort:{'seqnum' :1}});      
       })
       
       Meteor.publish("campaigns", function(campaignCursor){             

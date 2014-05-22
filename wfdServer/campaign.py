@@ -34,34 +34,36 @@ def activeToday(camp, dayNumber):
 
 
 def getActiveCampaigns(dbHostName, dbPortNumber):
-#    print "ACTIVE CAMPAIGN"
+    print "GET ACTIVE CAMPAIGN"
     
     today = datetime.date.today()
     dayNumber = today.weekday()
-#    print "Today is day number " + str(dayNumber)
+    print "Today is day number " + str(dayNumber)
     
     connection = Connection(dbHostName, dbPortNumber)
     print "Connecting to Campaign"
     
     db = connection.meteor
-#    print "Connected to Campaign"
+    print "Connected to Campaign"
     
     collection = db.campaigns
     
     activeCampaignList = []
-#    print "Active Campaign List"
+    print "Active Campaign List"
     
         
     for camp in db.campaigns.find().sort("campaign", pymongo.ASCENDING):
-        
+
+#        print "Campaign Loop " + camp['campaign']          
         try:
             if activeToday(camp, dayNumber):
-                print camp['campaign']  + "   "                
-                print " IS Active"
+                print "Campaign " + camp['campaign']  + " is Active"                
                 activeCampaignList.append(camp['_id'])            
                        
-        except:
+        except Exception, e:
+                print "getActiveCampaigns EXCEPTION -- %s" % e
                 print "Exception in calling activeToday()"
+                print "Campaign " + camp['campaign']               
             
             
     connection.close();            

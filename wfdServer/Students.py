@@ -24,16 +24,18 @@ def getActiveStudents(dbHostName, dbPortNumber, campaignID):
     
         activeStudentList = []
     
-        print "Active Student List"
+        print "Active Student List for Campaign " + campaignID
     
         for students in db.students.find({'campaign':campaignID}):
-            print students['cell']  + "   "                
-            print " IS Active"
+#       for students in db.students.find({}):
+         
+#            print students['cell']  + "   "  + students['campaign']              
+#            print " IS Active"
             activeStudentList.append(students['cell'])
              
         connection.close();
     
-        print "ACTIVE Students List EXIT"
+#        print "ACTIVE Students List EXIT"
 
         return activeStudentList
     

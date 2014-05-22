@@ -14,7 +14,10 @@ if (Meteor.isClient) {
   
   Session.setDefault('studentCursor', 0);
   Session.setDefault('wordCursor', 0);
+  Session.setDefault('wordCampaign', 0); 
   Session.setDefault('campaignCursor', 0);
+  
+  Session.setDefault('wgCampaign', "");
   
   Meteor.Router.add({
     '/':'homepage',
@@ -25,7 +28,7 @@ if (Meteor.isClient) {
   
   Meteor.autorun(function() {
     Meteor.subscribe("students", Session.get('studentCursor'));
-    Meteor.subscribe("words", Session.get('wordCursor'));
+    Meteor.subscribe("words", Session.get('wordCampaign'));
     Meteor.subscribe("campaigns", Session.get('campaignCursor'));    
     
   })    
@@ -74,7 +77,7 @@ if (Meteor.isClient) {
   Template.students.events({
     'click .addStudent':function(evt, tmpl){
       Session.set('editing_student', false);
-      mySetText('sprompt', "Adding Student");
+      mySetText('addStudent', "Adding Student");
     },
     'click .previous ':function(evt, tmpl){
       document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone
@@ -91,7 +94,7 @@ if (Meteor.isClient) {
   Template.studentRow.events({
     'dblclick .studentRow':function(evt, tmpl){
       Session.set('editing_student', tmpl.data._id);     
-      mySetText('sprompt','Editing Student');
+      mySetText('addStudent','Editing Student');
       var student = Students.findOne({_id:tmpl.data._id});             
       mySetText('cell', student.cell);
       mySetText('name', student.name);
@@ -139,7 +142,7 @@ if (Meteor.isClient) {
              myRedAlert('Student Not Found');
         } else {
             Session.set('editing_student', id);
-            mySetText('sprompt', "Editing Student");
+            mySetText('addStudent', "Editing Student");
             setHighLight(id);
         };          
     },
@@ -161,7 +164,7 @@ if (Meteor.isClient) {
           return;
         }
         myAlert("Student Updated");
-        mySetText('sprompt', 'Add Student');
+        mySetText('addStudent', 'Add Student');
         clearForm();
       } else {
         success = addStudent(cell, name, login, pword, tzoffset, allowaudio, campaign, studentStatus);
@@ -169,7 +172,7 @@ if (Meteor.isClient) {
           return;
         myAlert("Student Added");
         clearForm();
-        mySetText('sprompt', "Add Student");
+        mySetText('addStudent', "Add Student");
         }
       }
       Session.set('editing_student', false);
@@ -177,18 +180,18 @@ if (Meteor.isClient) {
     },
     'click .cancel':function(evt, tmpl) {
       Session.set('editing_student', false);
-      mySetText('sprompt', "Add Student");
+      mySetText('addStudent', "Add Student");
       clearForm();
       myClearAlert();
     },
     'click .remove':function(evt, tmpl) {
       removeStudent();
       Session.set('editing_student', false);
-      mySetText('sprompt', "Add Student");      
+      mySetText('addStudent', "Add Student");      
       clearForm();
     },
     'click .close':function(evt, tmpl) {
-      mySetText('sprompt', "Add Student");
+      mySetText('addStudent', "Add Student");
     },    
     'click .selCampaign':function(evt, tmpl) {
       var campi = document.getElementById("selCampaign").selectedIndex;
@@ -203,7 +206,7 @@ if (Meteor.isClient) {
     },
     'click .addStudent':function(evt, tmpl){
   
-      mySetText('sprompt', "Adding Student");
+      mySetText('addStudent', "Adding Student");
       myClearAlert();
     }
   })
@@ -343,11 +346,11 @@ if (Meteor.isClient) {
   }
   
   var mySetText = function(thisID, thisText){
-    if (thisID == "wprompt") {
+    if (thisID == "addWord") {
         document.getElementById(thisID).innerHTML = thisText;  
-    } else if (thisID == "sprompt") {
+    } else if (thisID == "addStudent") {
         document.getElementById(thisID).innerHTML = thisText;
-    } else if (thisID == "cprompt") {
+    } else if (thisID == "addCampaign") {
         document.getElementById(thisID).innerHTML = thisText;
     } else {
       document.getElementById(thisID).value = thisText;        
@@ -696,17 +699,38 @@ if (Meteor.isClient) {
     return Session.get('editing_word');
   }
   
+
   Template.wordgroups.wordList = function() {
-    
-   return Words.find({}, {sort:{'seqnum' :1}, limit:10, skip:Session.get('wordCursor')});
+        
+      var list1 = new Meteor.Collection();
+      var list2 = new Meteor.Collection();
   
+      c = Session.get('wgCampaign');
+
+      list1  = Words.find({});
+      
+      list1.forEach(function(wgroup) {
+           if ((c == "") || (wgroup['campaign'].indexOf(c) >= 0)) {
+               list2.insert(wgroup);
+           }
+      });
+      
+        
+      bigList = list2.find({}, {sort:{'seqnum' :1}, limit:10, skip:Session.get('wordCursor')});       
+          
+      
+//      bigList = Words.find({}, {sort:{'seqnum' :1}, limit:10, skip:Session.get('wordCursor')});
+          
+      return bigList;
   }
-  
   
   Template.wordgroups.campaignList = function() {
     return Campaigns.find({}, {sort:{'campaign' :1}});
   }
-    
+
+  Template.wordgroups.campaignLibrary = function() {  // Allows us to display Library as first selected item
+    return Campaigns.find({'campaign': 'Library'}, {sort:{'campaign' :1}});
+  }
     
   Template.wordRow.events({
     'dblclick .wordRow':function(evt, tmpl){
@@ -715,7 +739,7 @@ if (Meteor.isClient) {
       setHighLight(tmpl.data._id);
 
       Session.set('editing_word', tmpl.data._id);
-      mySetText('wprompt', "Editing Word Group");
+      mySetText('addWord', "Editing Word Group");
       
       displayWordGroupFromDB(tmpl.data._id);
          
@@ -723,7 +747,7 @@ if (Meteor.isClient) {
     'click .remove':function(evt, tmpl) {
       removeWord();
       Session.set('editing_word', false);
-      mySetText('wprompt', 'Add Word Group');
+      mySetText('addWord', 'Add Word Group');
       clearForm();
     },
     'click .enablewordshort':function(evt, tmpl) {
@@ -744,7 +768,7 @@ if (Meteor.isClient) {
              return;
         } else {
             Session.set('editing_word', id);
-            mySetText('wprompt', "Editing Word");
+            mySetText('addWord', "Editing Word Group");
             setHighLight(id);
         };
       },
@@ -761,7 +785,9 @@ if (Meteor.isClient) {
     'click .addWord':function(evt, tmpl){
       Session.set('editing_word', false);
       clearWordForm();
-      mySetText('wprompt', "Adding Word Group");
+      mySetText('addWord', "Adding Word Group");
+      document.getElementById('addWord').innerHTML = "Adding Word Group";
+      mySetButton('addWord', "Adding Word Group");
       
       var campi = document.getElementById("campaignsTop").selectedIndex;
       var campval = document.getElementById("campaignsTop").options[campi].value;      
@@ -815,7 +841,7 @@ if (Meteor.isClient) {
         }
         myAlert("Word Updated");
         clearWordForm();
-        mySetText('wprompt', "Add Word Group");
+        mySetText('addWord', "Add Word Group");
         
       } else {
         var res = Words.findOne({word:word});
@@ -835,27 +861,28 @@ if (Meteor.isClient) {
           return;
         myAlert("Word Added");
         clearWordForm();
-        mySetText('wprompt', 'Add Word Group');
+        mySetText('addWord', 'Add Word Group');
         
         }
       }
       Session.set('editing_word', false);
     },
     'click .clear':function(evt, tmpl) {
-      clearWordForm();first
-
-      
+      clearWordForm();
+      myClearAlert();
+      Session.setDefault('wgCampaign',"");
     },
     'click .cancel':function(evt, tmpl) {
       Session.set('editing_word', false);
-      mySetText('wprompt', "Add Word Group");  
+      mySetText('addWord', "Add Word Group");  
       clearWordForm();
       myClearAlert();
+      Session.setDefault('wgCampaign',"");      
     },
     'click .remove':function(evt, tmpl) {
       removeWord();
       Session.set('editing_word', false);
-      mySetText('wprompt', "Add Word Group");       
+      mySetText('addWord', "Add Word Group");       
       clearWordForm();
     },
     'click .close':function(evt, tmpl) {
@@ -898,7 +925,15 @@ if (Meteor.isClient) {
     } ,   
     'click .clearcampaign':function(evt, tmpl){
       campClear();
-    }       
+    } ,
+    'click .campaignsTop': function(evt, tmpl) {
+      var thisIndex = document.getElementById("campaignsTop").selectedIndex;
+      var thisCampaign = document.getElementById("campaignsTop").options[thisIndex].value;  
+      
+      myConsoleLog("Selected Campaign - " + thisCampaign + "    " + getCampaignName(thisCampaign));
+      Session.set('wgCampaign', thisCampaign);
+      clearWordForm();
+    }
     
   })
     //
@@ -913,9 +948,12 @@ if (Meteor.isClient) {
         curcamp = ""
       }
       
-      if (curcamp.contains(thisCamp) == true) {
-        return;
-      }
+//      if (curcamp.contains(thisCamp) == true) {
+//        return;
+//      }
+        if (curcamp.indexOf(thisCamp) >= 0) {
+          return;
+        }
       
       curcamp = curcamp + thisCamp + ",";
       myConsoleLog("campAddTo.curcamp " + curcamp);
@@ -951,7 +989,8 @@ if (Meteor.isClient) {
         campList = "";
       }
       
-      if (campList.contains(idForLibrary) == false) {
+//      if (campList.contains(idForLibrary) == false) {
+        if (campList.indexOf(idForLibrary) < 0) {
         campList = idForLibrary +  "," + campList;
         myConsoleLog("Found ID For Library camplist " + campList);
       }
@@ -1114,10 +1153,10 @@ if (Meteor.isClient) {
          var c = wgroup.campaign;
          if ((c == null) || (c =="")) {
     
-         } else {
-           myConsoleLog("word = "  +  wgroup.word  +    "c = " + c + "this campaign" + thisCampaign);
+         } else {   
+           myConsoleLog("word = "  +  wgroup.word  +    " c = " + c + " this campaign " + thisCampaign);
            
-           if (wgroup.campaign.contains(thisCampaign)) {
+            if (wgroup.campaign.indexOf(thisCampaign) >= 0) {
             returnBlock = returnBlock + "\r\n Word Group:  " + wgroup.word + "          Points: " + wgroup.points;
             returnBlock = returnBlock + "\r\n      Instruction:  " + wgroup.instruction; 
             returnBlock = returnBlock + "\r\n          Use 1:  " + wgroup.use1;
@@ -1232,7 +1271,7 @@ if (Meteor.isClient) {
       setHighLight(tmpl.data._id);
 
       Session.set('editing_campaign', tmpl.data._id);
-      mySetText('cprompt', "Editing Campaign");
+      mySetText('addCampaign', "Editing Campaign");
       
       displayCampaignFromDB(tmpl.data._id);
          
@@ -1243,7 +1282,7 @@ if (Meteor.isClient) {
     'click .addCampaign':function(evt, tmpl){
       Session.set('editing_campaign', false);
       clearCampaignForm();
-      mySetText('cprompt', "Adding Campaign");
+      mySetText('addCampaign', "Adding Campaign");
     },
     'click .previous ':function(evt, tmpl){
       document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone      
@@ -1264,7 +1303,7 @@ if (Meteor.isClient) {
              myRedAlert('Campaign Not Found');
         } else {
             Session.set('editing_campaign', id);
-            mySetText('cprompt', "Editing Campaign");
+            mySetText('addCampaign', "Editing Campaign");
             setHighLight(id);
         };
     },    
@@ -1301,7 +1340,7 @@ if (Meteor.isClient) {
         }
         myAlert("Campaign Updated");
         clearCampaignForm();
-        mySetText('cprompt', "Add Campaign");
+        mySetText('addCampaign', "Add Campaign");
         
       } else {
         var res = Campaigns.findOne({campaign:campaign});
@@ -1321,7 +1360,7 @@ if (Meteor.isClient) {
           return;
         myAlert("Campaign Added");
         clearCampaignForm();
-        mySetText('cprompt', 'Add Campaign');
+        mySetText('addCampaign', 'Add Campaign');
         
         }
       }
@@ -1332,7 +1371,7 @@ if (Meteor.isClient) {
     },
     'click .cancel':function(evt, tmpl) {
       Session.set('editing_campaign', false);
-      mySetText('cprompt', "Add Campaign");  
+      mySetText('addCampaign', "Add Campaign");  
       clearCampaignForm();
       myClearAlert();
     },
@@ -1344,7 +1383,7 @@ if (Meteor.isClient) {
       }
       
       Session.set('editing_campaign', false);
-      mySetText('cprompt', "Add Campaign");       
+      mySetText('addCampaign', "Add Campaign");       
       clearCampaignForm();
     },
     'click .addxdate':function(evt, tmpl) {
@@ -1355,7 +1394,8 @@ if (Meteor.isClient) {
         myRedAlert("Exclude Date Entered is invalid         mm/dd/yyyy");
         return;
       }     
-      if (xdatelist.contains(xdate)) {
+//      if (xdatelist.contains(xdate)) {
+        if (xdatelist.indexOf(xdate)) {
         myAlert("Date already on excluded list");
         return;
       }     
@@ -1370,7 +1410,8 @@ if (Meteor.isClient) {
         myRedAlert("Exclude Date Entered is invalid         mm/dd/yyyy");
         return;
       }
-      if (xdatelist.contains(xdate) == false) {
+      if (xdatelist.indexOf(xdate) < 0) {
+ //     if (xdatelist.contains(xdate) == false) {
         myRedAlert("Date not on excluded list");
         return;
       } 
@@ -1390,8 +1431,9 @@ if (Meteor.isClient) {
     },
     'click .seqmsgremove':function(evt, tmpl) {
       var msg = myGetText('imessage').trim();
-      var msglist = myGetText('csequencetext');           
-      if (msglist.contains(msg) == false) {
+      var msglist = myGetText('csequencetext');
+      if (msglist.indexOf(msg) < 0) {
+//      if (msglist.contains(msg) == false) {
         myRedAlert("Message already present");
         return;
       } 

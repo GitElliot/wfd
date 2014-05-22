@@ -38,46 +38,58 @@ def getWords():
     
     connection.close()
     
+    
+    
+    
+print "Start Here"
 
-print "HELLO WORLD"
-
-# getWords()
+# Get Active Campaign List for today
 activeCampaignList = []
 activeCampaignList = getActiveCampaigns(dbHostName, dbPortNumber)
-print activeCampaignList[0]
 
-activeStudentList = getActiveStudents(dbHostName, dbPortNumber, activeCampaignList[0])
-
-activeWordList = []
-activeWordList = getActiveWordList(dbHostName, dbPortNumber, activeCampaignList[0])
-
-i = 0
-wi = 0
-si = 0
-
-localtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#print localtime
-
-logLine =  localtime + " Send word  group <<" + activeWordList[wi] + ">>  to student " + activeStudentList[si]
-print logLine
-studentAddLogLine(dbHostName, dbPortNumber, activeStudentList[si], logLine)
-
-#sendSMS(activeStudentList[i], activeWordList[i])
-
+print "Active Campaign Count " + str(len(activeCampaignList))
+for campaignIndex in range (0,  len(activeCampaignList)):
+    
+    print "Start Campaign " + activeCampaignList[campaignIndex]
+ 
+    activeStudentList = getActiveStudents(dbHostName, dbPortNumber, activeCampaignList[campaignIndex])
+    
+    for studentIndex in range (0,  len(activeStudentList)):
+        print "STUDENT CELL " + activeStudentList[studentIndex]
+     
+        activeWordList = []
+        activeWordList = getActiveWordList(dbHostName, dbPortNumber, activeCampaignList[0])
+        
+        for wordIndex in range (0, len(activeWordList)):
+            print "Word Tag " + activeWordList[wordIndex]
+        
 #
-# Get WordGroup from DB to send
-thisWordGroup = getActiveWord(dbHostName, dbPortNumber, activeWordList[i])
+#i = 0
+#wi = 0
+#si = 0
+#
+            localtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print localtime
+            logLine =  localtime + " Send word  group <<" + activeWordList[wordIndex] + ">>  to student " + activeStudentList[studentIndex]
+            print logLine
+            studentAddLogLine(dbHostName, dbPortNumber, activeStudentList[studentIndex], logLine)
 
-print "Length " + str(len(thisWordGroup))
+            sendSMS(activeStudentList[studentIndex], activeWordList[wordIndex])
 
-if (len(thisWordGroup) > 0):
-    retVal = sendSMS(activeStudentList[i], thisWordGroup[0])
-    print retVal
-    retVal = sendSMS(activeStudentList[i], thisWordGroup[1])
-    print retVal
-    retVal = sendSMS(activeStudentList[i], thisWordGroup[2])
-    print retVal
-    retVal = sendSMS(activeStudentList[i], thisWordGroup[3])
-    print retVal
+
+            ## Get WordGroup from DB to send
+            thisWordGroup = getActiveWord(dbHostName, dbPortNumber, activeWordList[wordIndex])
+#
+            print "Length " + str(len(thisWordGroup))
+
+            if (len(thisWordGroup) > 0):
+                retVal = sendSMS(activeStudentList[studentIndex], thisWordGroup[0])
+                print retVal
+                retVal = sendSMS(activeStudentList[studentIndex], thisWordGroup[1])
+                print retVal
+                retVal = sendSMS(activeStudentList[studentIndex], thisWordGroup[2])
+                print retVal
+                retVal = sendSMS(activeStudentList[studentIndex], thisWordGroup[3])
+                print retVal
 
 
