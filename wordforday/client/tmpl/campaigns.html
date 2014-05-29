@@ -1,5 +1,6 @@
 <template name="campaigns">
-     <p hidden id="highlight"></p>   
+     <p hidden id="highlight"></p>
+     <p hidden id="cwordorder"></p>
      
    <div class="top-block">
 	
@@ -79,6 +80,14 @@
 			<td>
 			<input type="text" class="campaign" name="campaign" value="{{campaign.name}}" id="ccampaign">
 			</td>
+			<td>
+			 &nbsp;
+	                <a href="#" class="btn btn-success campaignStatusStart" >Start</a>
+	       		 &nbsp;
+	                <a href="#" class="btn btn-success campaignStatusStop">Stop</a>
+	       		 &nbsp;
+	                <a href="#" class="btn btn-success campaignStatusRestart">Restart</a>			
+			</td>
 		    </tr>
 		    <tr>
 			<td>
@@ -86,7 +95,8 @@
 			</td>
 			<td>
 			    <input type="text" class="keyword" name="keyword" value="{{campaign.keyword}}" id="ckeyword">
-			</td>
+			</td> &nbsp;&nbsp;
+			    <input readonly type="text" class="cstate" name="cstate" value="{{campaign.cstate}}" id="cstate">
 		    </tr>		    
 		    
 		 </table>  

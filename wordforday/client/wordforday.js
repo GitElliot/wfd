@@ -345,6 +345,10 @@ if (Meteor.isClient) {
    document.getElementById(thisID).value = "";
   }
   
+  var myClearTextInner = function(thisID) {
+    document.getElementById(thisID).innerHTML = "";
+  }
+  
   var mySetText = function(thisID, thisText){
     if (thisID == "addWord") {
         document.getElementById(thisID).innerHTML = thisText;  
@@ -357,6 +361,14 @@ if (Meteor.isClient) {
     }
       
   }
+  
+  var mySetTextInner = function(thisID, thisText) {
+    document.getElementById(thisID).innerHTML = thisText;
+  }
+  
+  var myGetTextInner = function(thisID){
+    return document.getElementById(thisID).innerHTML;
+  } 
   
   var myGetText = function(thisID){
     return document.getElementById(thisID).value;
@@ -426,7 +438,10 @@ if (Meteor.isClient) {
       if (p1 == "") {
         
       } else {
-        document.getElementById(p1).style.backgroundColor = '#FFFFFF'; 
+          if (document.getElementById(p1)) {
+             document.getElementById(p1).style.backgroundColor = '#FFFFFF'; 
+          }
+
       }
   
       document.getElementById(thisID).style.backgroundColor ='#FF7F00';
@@ -457,49 +472,68 @@ if (Meteor.isClient) {
 // Move WordGroup Up or Down One row
 // direction is  "UP"   or "DOWN" 
 //
-    var moveRow = function(currentSeq, direction){
-        
-      var d = 1;
-      if (direction =="DOWN") {
-        d = -1;
+var moveRow = function(currentSeq, direction){
+   
+    var campID = Session.get('wgCampaign');              // current campaign  
+    var cListOrder = getCampaignWordList(campID);        // word list order
+    
+//    myConsoleLog("ORIG ORDER  " +  cListOrder);
+    
+    if (cListOrder == "") {
+      return false;
+    }
+    
+    var cListArray = cListOrder.split(",");
+    var targetIndex = 0;
+    var elementCount = -1;
+      
+      for (i = 0; i < cListArray.length; i++) {
+        if (currentSeq == cListArray[i]) {
+          targetIndex = i;
+        }
+        elementCount += 1;
       }
+//      myConsoleLog("Target Index " + targetIndex + "  element count " + elementCount);
       
-      var wlist = Words.find({}, {sort:{'seqnum' :d}});
-      
-      // Need to find sequence number of record before and after this one
-      var previousSeq = "";
-      var previousId = "";
-      var currentId = "";
-      var found = false;
-      
-      var i = 0;  
-      wlist.forEach(function(wgroup) {     
+      if (direction == "DOWN") {   // Move Down       
+        if (targetIndex >= elementCount) {
+          return false;
+        }
         
-        if (found == false) {
-          if (currentSeq == wgroup.seqnum) {
-            found = true;
-            currentId = wgroup._id;
-          }
-          if (found == false) {
-          previousSeq = wgroup.seqnum;  
-          previousId = wgroup._id;
-          }
-        }   
-      });
-          
-      if (previousId == "") {    // No where to move to
+        targetIndex = 0;
+        var temp = cListArray[targetIndex];
+        cListArray[targetIndex] = cListArray[targetIndex + 1];
+        cListArray[targetIndex + 1] = temp;
+               
+      } else if (direction == "UP") {      // Move Up
+        
+      if (targetIndex <= 0) {
         return false;
       }
       
-      var retVal = Words.update(previousId, {$set:{seqnum:currentSeq}});
-
-      retVal = Words.update(currentId, {$set:{seqnum:previousSeq}});
+      var temp = cListArray[targetIndex];
+      cListArray[targetIndex] = cListArray[targetIndex - 1];
+      cListArray[targetIndex - 1] = temp;
+      }
       
-      Session.set('editing_word', currentId);
+      // Create new list
+      var cListOrder = "";
+      for (var i = 0; i < elementCount; i++) {
+        cListOrder = cListOrder + cListArray[i] + ",";       
+      }
       
-      displayWordGroupFromDB(currentId);
+      myConsoleLog("NEW ORDER  " +  cListOrder);
+               
+      setCampaignWordList(campID, cListOrder);   // Write List to Campaign Table
       
-      setHighLight(currentId);
+//      var word = Words.findOne({seqnum:currentSeq});
+       
+      
+//      Session.set('editing_word', word._id);
+      
+//      displayWordGroupFromDB(word._id);
+      
+//      setHighLight(word._id);
     
                                      
       return true;
@@ -522,7 +556,7 @@ if (Meteor.isClient) {
                           active2:active2, ans3:ans3, active3:active3, ans4:ans4, active4:active4,
                           ans5:ans5, active5:active5, remedifcorrect:remedifcorrect,
                           remedifwrong:remedifwrong, enableaudio:enableaudio, url:url, campaign:campaign});
-    
+        
     myAlert("Word Group Inserted");
     return true;
       
@@ -600,7 +634,9 @@ if (Meteor.isClient) {
       if (word == "") {
         return false;
       }
-      
+      var c = Session.get('wgCampaign');              // current campaign (or Library)
+        
+      var cListOrder = getCampaignWordList(c);        // word list order
       mySetText('wseqnum',word.seqnum);
       mySetText('word', word.word);
       mySetButton('wactive', word.active);
@@ -702,21 +738,36 @@ if (Meteor.isClient) {
 
   Template.wordgroups.wordList = function() {
         
-      var list1 = new Meteor.Collection();
-      var list2 = new Meteor.Collection();
+      var list1 = new Meteor.Collection(null);
+      var list2 = new Meteor.Collection(null);
   
-      c = Session.get('wgCampaign');
-
-      list1  = Words.find({});
-      
-      list1.forEach(function(wgroup) {
-           if ((c == "") || (wgroup['campaign'].indexOf(c) >= 0)) {
-               list2.insert(wgroup);
-           }
-      });
-      
+      var campID = Session.get('wgCampaign');              // current campaign (or Library)
         
-      bigList = list2.find({}, {sort:{'seqnum' :1}, limit:10, skip:Session.get('wordCursor')});       
+      var cListOrder = getCampaignWordList(campID);        // word list order
+      var cListArray = cListOrder.split(",");
+      
+//      myConsoleLog("Word Order for this Campaign ");
+      
+      for (var i in cListArray) {
+        
+        if (cListArray[i] == "") {
+          continue;
+        }
+        
+        var word = Words.findOne({seqnum:cListArray[i]});
+
+        if (word == null) {
+          continue;
+        }
+        
+        if (word != "") {
+          list2.insert(word);
+          myConsoleLog("LEFT SIDE  " + cListArray[i] + "   " + word.word);          
+        }
+      }  
+        
+        
+      bigList = list2.find({}, {limit:10, skip:Session.get('wordCursor')});       
           
       
 //      bigList = Words.find({}, {sort:{'seqnum' :1}, limit:10, skip:Session.get('wordCursor')});
@@ -830,8 +881,15 @@ if (Meteor.isClient) {
       var url = myGetButton('wurl');
       
       var campaign = myGetText('wcampaignids');
+      
+      if (campaign == "") {
+        myRedAlert("No Campaigns Associtated with this Word Group");
+        return;
+      }
+      
+      myConsoleLog("Save campaign list: " + campaign);
                
-     if (Session.get('editing_word')) {
+      if (Session.get('editing_word')) {
 
         success = updateWord(seqnum, word, active, points, instruction, flashtime, use1, use2, use3,
                           question, ans1, active1, ans2, active2, ans3, active3, ans4, active4,
@@ -839,6 +897,9 @@ if (Meteor.isClient) {
         if (success == false) {
           return;
         }
+        
+        campaignTableAudit(seqnum, campaign);
+        
         myAlert("Word Updated");
         clearWordForm();
         mySetText('addWord', "Add Word Group");
@@ -859,11 +920,13 @@ if (Meteor.isClient) {
                           ans5, active5, remedifcorrect, remedifwrong, enableaudio, url, campaign);
         if (success == false) {
           return;
+        }
+        
         myAlert("Word Added");
         clearWordForm();
         mySetText('addWord', 'Add Word Group');
         
-        }
+        campaignTableAudit(seqnum, campaign);
       }
       Session.set('editing_word', false);
     },
@@ -1003,8 +1066,17 @@ if (Meteor.isClient) {
       var campNameList = "";
       for (var i = 0; i < campListArray.length; i++) {
         myConsoleLog("This ID -> " + campListArray[i]);
-        
-        campNameList = campNameList + getCampaignName(campListArray[i]) + "\r\n";
+        if (campListArray[i] != "") {
+           var campName = getCampaignName(campListArray[i]);
+           if (campName == "") {  // Campaign Gone  - do clean-up
+               campList = campList.replace((campListArray[i] + ","), "");
+               mySetText('wcampaignids', campList);
+               myConsoleLog("Campaign Gone --" + campListArray[i] + " removed from Word Group ");
+           } else {
+               campNameList = campNameList + getCampaignName(campListArray[i]) + "\r\n";
+           }    
+        }
+          
       }
       
       mySetText('wcampaign', campNameList);
@@ -1019,9 +1091,104 @@ if (Meteor.isClient) {
      //JAVASCRIPT FOR Campaigns         JAVASCRIPT FOR Campaigns          JAVASCRIPT FOR Campaigns     
      //JAVASCRIPT FOR Campaigns         JAVASCRIPT FOR Campaigns          JAVASCRIPT FOR Campaigns
      
- //
- // Get Campaign Name from DB Campaign Table
+var campaignTableAudit = function (seqnum, campaignList) {
+  
+  var nOrder = "";
+  var nCamp = "";
+  var found = 0;
+  var campaignListArray = campaignList.split(",");    // Campaigns for this word
+ 
+  
+  campList = Campaigns.find({});      // All Campaigns  - Add missing wordgroups  
+  
+  myConsoleLog("Campaign Table Audit    seqnum =  " + seqnum  + "  list " + campaignList);
+   
+  campList.forEach(function(camp) {     // Campaign Database record -  Add if missing
+    
+      found = 0;
+      nOrder = camp.cwordorder;
+      myConsoleLog("Campaign " + camp.campaign + "  Order " + nOrder );
+      
+      if (nOrder.indexOf(seqnum) >= 0 ) {  //sequence number found in this campaign
+          found = 1; 
+      }
+    
+      for (i = 0; i < campaignListArray.length; i++) {   // Word Group Campaign List
+      
+          if (nOrder.indexOf(campaignListArray[i] >= 0)) {
+              if ((found == 0) && (campaignListArray[i] == camp._id)) {
+                 // Not there,  need to add it to SQL
+                 nOrder = nOrder + seqnum + ",";
+                 setCampaignWordList(camp._id, nOrder);       // Update SQL
+              }
+          }
+      }    
+  });
+  
+  campList = Campaigns.find({});
+  
+  campList.forEach(function(camp) {     // Campaign Database record -  clean up
+      
+      nOrder = camp.cwordorder;
+      nCamp = camp._id;
+      
+      if ((nOrder.indexOf(seqnum) >= 0) && (campaignList.indexOf(nCamp) < 0)){
+        // remove sequence number from this campaign
+        nOrder = nOrder.replace((seqnum + ","), "");
+        setCampaignWordList(nCamp, nOrder);
+      }
+    
+    
+    });
+
+    
+  
+     
+}
+var rebuildLibrary = function() {
+    alert("Rebuild Library Campaign");
+    //myConsoleLog("Rebuild Library Campaign");
+    //var cList = ""
+    //
+    //var wlist = Words.find({}, {sort:{'seqnum' :1}});
+    //  
+    //  
+    //  var i = 0;  
+    //  wlist.forEach(function(wgroup) {
+    //    myConsoleLog(  wgroup.seqnum  +  "   "   +   wgroup.word);
+    //    cList = cList + wgroup.seqnum + ",";
+    //    
+    //
+    //  });
+    //  myConsoleLog(cList);
+    //  var c = getCampaignID("Test");      
+    //  myConsoleLog("Get Campaign ID " + c);
+    //  setCampaignWordList(c, "10009,10019,10004,"); 
+}
+
+//
+// Add Word Sequence Number to Campaign (if its not there already)
+//
+    var addWordSeqToDB = function(id, seqnum){
+      
+        var campaignWordList = getCampaignWordList(id);
+        alert(campaignWordList)
+        
+        if (campaignWordList == null) {
+            campaignWordList = "";
+        }
+        
+        if (campaignWordList.indexOf(seqnum) < 0) {
+          campaignWordList = campaignWordList  + seqnum + ",";
+          
+          setCampaignWordList(id, campaignWordList);
+        }
+           
+    }
+// Get Campaign Name from DB Campaign Table
     var getCampaignName = function(campaignID){
+      
+      myConsoleLog("getCampaignName  " + campaignID)
       
       if (campaignID == null ){
         return "";
@@ -1032,6 +1199,10 @@ if (Meteor.isClient) {
       }
       myConsoleLog("getCampaignName for id " + campaignID);   
       var campaign = Campaigns.findOne({_id:campaignID});
+      
+      if ((campaign == null) || (campaign == "")) {
+        return "";
+      }
       
       myConsoleLog("getCampaignName return " + campaign.campaign);
       return campaign.campaign;    
@@ -1048,20 +1219,66 @@ if (Meteor.isClient) {
     if (campaignName == "") {
       return "";
     }
-    
     var campaign = Campaigns.findOne({campaign:campaignName});
-    
     if ((campaign == null) || (campaign == "")) {
       return "";
     }
     
     return campaign._id;
-    
    }
+
+//
+// Get Campaign Word List (Order)
+var getCampaignWordList = function(campaignID){
   
+  var campaign = Campaigns.findOne({_id:campaignID});
+  
+    if ((campaign == null) || (campaign == "")) {
+      return "";
+    }
+    
+    if ((campaign.cwordorder == null) || (campaign.cwordorder.length == 0)) {
+      return "";
+    }
+    myConsoleLog("getCampaignWordList ORDER " + campaign.cwordorder );
+    return campaign.cwordorder; 
+}
+
+//
+// Update Campaign Word List (Order)
+var setCampaignWordList = function (campaignID, campaignWordOrder) {
+    try {
+
+          var campaign = Campaigns.findOne({_id:campaignID});
+          
+          if ((campaign == null) || (campaign == "" )) {
+            return false;
+          }
+          
+          campaign.cwordorder = campaignWordOrder;
+                   
+          myConsoleLog("set word list   " + campaign.cwordorder);
+          
+          var result = CampaignUpdateByID(campaignID, campaign);
+          
+
+          
+          return true;
+    } catch(err) {
+      myConsoleLog("EXCEPTION  " + err +  " CampaignID = " + campaignID + "  order " + campaignWordOrder);
+      return false;
+    }
+}
+
+
+  
+  //
+  //Clear Campaign Form
    var clearCampaignForm = function() {
       myClearText('ccampaign');
       myClearText('ckeyword');
+      myClearText('cstate');
+      myClearTextInner('cwordorder');
       
       myClearText('csequencetext');
       myClearText('imessage');
@@ -1087,7 +1304,7 @@ if (Meteor.isClient) {
     
  // Add New Campaign to Database
  //
-    var addCampaign = function(campaign, keyword, csequencetext, imessage, monactive, tueactive, wedactive,
+    var addCampaign = function(campaign, keyword, cstate, cwordorder, csequencetext, imessage, monactive, tueactive, wedactive,
                         thuactive, friactive, satactive, sunactive, sendtime, studentactive, sendcount, sendaftercount,
                         xdate, xdatelist) {      
     if (campaign.length == 0) {
@@ -1095,8 +1312,12 @@ if (Meteor.isClient) {
       return false;
     }
     
+    if (cwordorder == null){
+      cwordorder = "";
+    }
+    
     Campaigns.insert({campaign:campaign, keyword:keyword, 
-                     csequencetext:csequencetext, imessage:imessage, monactivec11:monactive, tueactive:tueactive,
+                     csequencetext:csequencetext, cstate:cstate, cwordorder:cwordorder, imessage:imessage, monactive:monactive, tueactive:tueactive,
                      wedactive:wedactive, thuactive:thuactive, friactive:friactive, satactive:satactive,
                      sunactive:sunactive, sendtime:sendtime, studentactive:studentactive, sendcount:sendcount,
                      sendaftercount:sendaftercount, xdate:xdate, xdatelist:xdatelist                    
@@ -1108,7 +1329,7 @@ if (Meteor.isClient) {
   }
 
   
-  var updateCampaign = function(campaign, keyword, csequencetext, imessage, monactive, tueactive, wedactive,
+  var updateCampaign = function(campaign, keyword, cstate, cwordorder, csequencetext, imessage, monactive, tueactive, wedactive,
                         thuactive, friactive, satactive, sunactive, sendtime, studentactive, sendcount, sendaftercount,
                         xdate, xdatelist) { 
     
@@ -1116,14 +1337,23 @@ if (Meteor.isClient) {
       myRedAlert("Campaign is required");
       return false;
     }
+    
+    
 
     Campaigns.update(Session.get('editing_campaign'), {$set: {campaign:campaign, keyword:keyword,
+                     cstate:cstate, cwordorder:cwordorder,
                      csequencetext:csequencetext, imessage:imessage, monactive:monactive, tueactive:tueactive,
                      wedactive:wedactive, thuactive:thuactive, friactive:friactive, satactive:satactive,
                      sunactive:sunactive, sendtime:sendtime, studentactive:studentactive, sendcount:sendcount,
                      sendaftercount:sendaftercount, xdate:xdate, xdatelist:xdatelist}});
     
     return true;
+  }
+  
+  
+  var CampaignUpdateByID = function (campaignID, campaign)  {
+    
+    return Campaigns.update(campaignID, campaign);
   }
   
     
@@ -1143,40 +1373,62 @@ if (Meteor.isClient) {
     }
     return "INACTIVE";
   }
+  
+  
+  
   // Build SequenceText for Campaign Number
   var buildSequenceBlock = function(thisCampaign){
-    var returnBlock = "";
     
-      var wlist = Words.find({}, {sort:{'seqnum' :1}});
+    
+    myConsoleLog("Build Sequence Block for this Campaign " + thisCampaign);   
+    var wordSequenceList = getCampaignWordList(thisCampaign);
+    
+    myConsoleLog("Sequenced List " + wordSequenceList);    
+    var wordArray = wordSequenceList.split(",");
+    
+    var returnBlock = ""; 
+    
+    for (i = 0; i < wordArray.length; i++ ) {
+      myConsoleLog("Find word: ->" + wordArray[i] +"<-");
       
-       wlist.forEach(function(wgroup) {
-         var c = wgroup.campaign;
-         if ((c == null) || (c =="")) {
-    
-         } else {   
-           myConsoleLog("word = "  +  wgroup.word  +    " c = " + c + " this campaign " + thisCampaign);
+      var w = wordArray[i];
+      
+      if (w == "") {
+        continue;
+      }
+      var wgroup = Words.findOne({seqnum:w});
+      
+      if ((wgroup == null) || (wgroup == "")) {
+        returnBlock = returnBlock + "\r\n" +  "Word Not Found " + wordArray[i];
+        continue;
+      }
+          
+          if ((wgroup.cstate == null) || (wgroup.cstate == "")) {  // added later, may be null
+           wgroup.cstate = "off";
+          }
            
-            if (wgroup.campaign.indexOf(thisCampaign) >= 0) {
-            returnBlock = returnBlock + "\r\n Word Group:  " + wgroup.word + "          Points: " + wgroup.points;
-            returnBlock = returnBlock + "\r\n      Instruction:  " + wgroup.instruction; 
-            returnBlock = returnBlock + "\r\n          Use 1:  " + wgroup.use1;
-            returnBlock = returnBlock + "\r\n          Use 2:  " + wgroup.use2;
-            returnBlock = returnBlock + "\r\n          Use 3:  " + wgroup.use3;
-            returnBlock = returnBlock + "\r\n      Question:  " + wgroup.question;
-            returnBlock = returnBlock + "\r\n             ans 1:  "  + wgroup.ans1 + "          " + wgroup.active1;
-            returnBlock = returnBlock + "\r\n             ans 2:  "  + wgroup.ans2 + "          " + wgroup.active2;            
-            returnBlock = returnBlock + "\r\n             ans 3:  "  + wgroup.ans3 + "          " + wgroup.active3;
-            returnBlock = returnBlock + "\r\n             ans 4:  "  + wgroup.ans4 + "          " + wgroup.active4;
-            returnBlock = returnBlock + "\r\n             ans 5:  "  + wgroup.ans5 + "          " + wgroup.active5;
-            returnBlock = returnBlock + "\r\n      Remediation if Correct:    " + wgroup.remedifcorrect;
-            returnBlock = returnBlock + "\r\n      Remediation if Incorrect:  " + wgroup.remedifwrong;     
-            
-            returnBlock +="\r\n";
-           } 
-        }
+          myConsoleLog("word = "  +  wgroup.word  +  " this campaign " + thisCampaign + " State " + wgroup.cstate);
+           
+          returnBlock = returnBlock + "\r\n Word Group:  " + wgroup.word + "          Points: " + wgroup.points;
+          returnBlock = returnBlock + "\r\n      Instruction:  " + wgroup.instruction; 
+          returnBlock = returnBlock + "\r\n          Use 1:  " + wgroup.use1;
+          returnBlock = returnBlock + "\r\n          Use 2:  " + wgroup.use2;
+          returnBlock = returnBlock + "\r\n          Use 3:  " + wgroup.use3;
+          returnBlock = returnBlock + "\r\n      Question:  " + wgroup.question;
+          returnBlock = returnBlock + "\r\n             ans 1:  "  + wgroup.ans1 + "          " + wgroup.active1;
+          returnBlock = returnBlock + "\r\n             ans 2:  "  + wgroup.ans2 + "          " + wgroup.active2;            
+          returnBlock = returnBlock + "\r\n             ans 3:  "  + wgroup.ans3 + "          " + wgroup.active3;
+          returnBlock = returnBlock + "\r\n             ans 4:  "  + wgroup.ans4 + "          " + wgroup.active4;
+          returnBlock = returnBlock + "\r\n             ans 5:  "  + wgroup.ans5 + "          " + wgroup.active5;
+          returnBlock = returnBlock + "\r\n      Remediation if Correct:    " + wgroup.remedifcorrect;
+          returnBlock = returnBlock + "\r\n      Remediation if Incorrect:  " + wgroup.remedifwrong;     
+          
+          returnBlock +="\r\n";
+     
+    }
+    
 
-      });
-      return returnBlock;
+   return returnBlock;
     
     
   }
@@ -1189,10 +1441,18 @@ if (Meteor.isClient) {
       mySetText('ccampaign',campaign.campaign);
       mySetText('ckeyword', campaign.keyword);
       
-
+      if ((campaign.cstate == null) || (campaign.cstate == "")) {    // added later, may be null
+        campaign.cstate = "off"
+      }
+      mySetText('cstate', campaign.cstate);
+      
+      if ((campaign.cwordorder == null) || (campaign.cwordorder == "")) {
+        campaign.cwordorder = "";
+      }
+      mySetTextInner('cwordorder', campaign.cwordorder);
+      
       document.getElementById('csequencetext').innerHTML = buildSequenceBlock(campaign._id);
       mySetText('imessage', campaign.imessage);
-           
       mySetButton('monactive', campaign.monactive);
       mySetButton('tueactive', campaign.tueactive);
       mySetButton('wedactive',campaign.wedactive);
@@ -1219,6 +1479,18 @@ if (Meteor.isClient) {
             
       mySetText('ccampaign',campaign.campaign);
       mySetText('ckeyword', campaign.keyword);
+      
+      if ((campaign.cstate == null) || (campaign.cstate == ""))  {  // added later, may be null
+        campaign.cstate = "off"
+      }
+      mySetText('cstate', campaign.cstate);
+      
+      if ((campaign.cwordorder == null) || (campaign.cwordorder == "")) {
+        campaign.cwordorder = "";
+      }
+      
+      mySetTextInner('cwordorder', campaign.cwordorder);      
+      
       mySetText('csequencetext', campaign.csequencetext);
       mySetText('imessage', campaign.imessage);
      
@@ -1294,6 +1566,16 @@ if (Meteor.isClient) {
         document.getElementById('highlight').innerHTML = "";  // Previous highlight already gone      
         Session.set('campaignCursor', Number(Session.get('campaignCursor')) +10);
     },
+    'click .campaignStatusStart ':function(evt, tmpl){
+        alert('campaignStatusStart   Not Connected Yet');
+    },    
+     'click .campaignStatusStop ':function(evt, tmpl){
+        alert('campaignStatusStop   Not Connected Yet');
+    },       
+      'click .campaignStatusRestart ':function(evt, tmpl){
+        alert('campaignStatusRestart  Not Connected Yet');
+    },       
+    
     'click .campaignSearch ':function(evt, tmpl){
         var campToFind = myGetText('campString');
         clearCampaignForm();
@@ -1310,6 +1592,10 @@ if (Meteor.isClient) {
     'click .save':function(evt, tmpl) {
       var campaign = myGetText('ccampaign');
       var keyword = myGetText('ckeyword');
+      
+      var cstate = myGetText('cstate');
+      var cwordorder = myGetText('cwordorder');
+      
       var sequencetext = myGetText('csequencetext');
 
       var imessage = myGetText('imessage');
@@ -1331,7 +1617,7 @@ if (Meteor.isClient) {
                             
      if (Session.get('editing_campaign')) {
 
-        success = updateCampaign(campaign, keyword, sequencetext, imessage, monactive, tueactive, wedactive,
+        success = updateCampaign(campaign, keyword, cstate, cwordorder, sequencetext, imessage, monactive, tueactive, wedactive,
                   thuactive, friactive, satactive, sunactive, sendtime, activestudent, sendcount, sendaftercount,
                   xdate, xdatelist);
         
@@ -1352,7 +1638,7 @@ if (Meteor.isClient) {
           }         
         }
         
-        success = addCampaign(campaign, keyword, sequencetext, imessage, monactive, tueactive, wedactive,
+        success = addCampaign(campaign, keyword, cstate, cwordorder, sequencetext, imessage, monactive, tueactive, wedactive,
                   thuactive, friactive, satactive, sunactive, sendtime, activestudent, sendcount, sendaftercount,
                   xdate, xdatelist);      
 
@@ -1447,9 +1733,6 @@ if (Meteor.isClient) {
    'click .close':function(evt, tmpl) {
     },
   })
-     
-     
-     
-     
+          
      
 };
