@@ -37,12 +37,13 @@ def getWords():
     
     
 print "Start Here"
+myLog("WFD Server Start")
 
 # Get Active Campaign List for today
 activeCampaignList = []
 
 # Main Loop  (limited)
-for i in range(0, 60):
+for i in range(0, 120):
     time.sleep(10)
 
     print "MAIN LOOP COUNT " + str(i)
@@ -54,13 +55,13 @@ for i in range(0, 60):
         
         print "Start Campaign " + activeCampaignList[campaignIndex]
      
-        activeStudentList = getActiveStudents(dbHostName, dbPortNumber, activeCampaignList[campaignIndex])
+        activeStudentList = getActiveStudents(activeCampaignList[campaignIndex])
      
         wordIndex = 0
         for studentIndex in range (0,  len(activeStudentList)):
             print "STUDENT CELL " + activeStudentList[studentIndex]
             
-            student = studentGetRecord(dbHostName, dbPortNumber, activeStudentList[studentIndex])
+            student = studentGetRecord(activeStudentList[studentIndex])
             
             if (studentReadyForNextMessage(student)):
                 print "Send Message Now"
@@ -70,7 +71,7 @@ for i in range(0, 60):
                 print "Send Next Word <" + nextWord + ">"
                 
                 activeWordList = []
-                activeWordList = getActiveWordList(dbHostName, dbPortNumber, activeCampaignList[campaignIndex])
+                activeWordList = getActiveWordList(activeCampaignList[campaignIndex])
                 
                 for activeWordIndex in range (0, len(activeWordList)):
                     
@@ -82,7 +83,7 @@ for i in range(0, 60):
                         print localtime
                         logLine =  localtime + " Send word  group <<" + activeWordList[activeWordIndex] + ">>  to student " + activeStudentList[studentIndex]
                         print logLine
-                        studentAddLogLine(dbHostName, dbPortNumber, activeStudentList[studentIndex], logLine)
+                        studentAddLogLine(activeStudentList[studentIndex], logLine)
                         
                         currentMessageTime = time.time()
                         nextMessageTime = currentMessageTime + (5 * 60)   # minutes * seconds
@@ -92,15 +93,15 @@ for i in range(0, 60):
                             logLine = "Next Message Time <" + str(nextMessageTime) + ">"
                             logLine += "Next Word <" + activeWordList[activeWordIndex + 1] + ">"
                             print logLine
-                            studentAddLogLine(dbHostName, dbPortNumber, activeStudentList[studentIndex], logLine)
+                            studentAddLogLine(activeStudentList[studentIndex], logLine)
                         else:
                             logLine = "<Campaign Done>"
                             print logLine
-                            studentAddLogLine(dbHostName, dbPortNumber, activeStudentList[studentIndex], logLine)                        
+                            studentAddLogLine(activeStudentList[studentIndex], logLine)                        
                 
         
                         ## Get WordGroup from DB to send
-                        thisWordGroup = getActiveWord(dbHostName, dbPortNumber, activeWordList[activeWordIndex])
+                        thisWordGroup = getActiveWord(activeWordList[activeWordIndex])
             
                         print "Length " + str(len(thisWordGroup))
             

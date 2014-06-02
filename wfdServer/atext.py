@@ -8,6 +8,7 @@ from httplib2 import *
 
 import urllib
 import requests
+import sys
 
 atextURL = "http://api.atext.com"
 atextPort = 80
@@ -30,7 +31,7 @@ def getSubscribers():
     m = atextURL + message6
     r = requests.get(m)
     print r.content  
-    return
+    return r.content
 
 def sendSMS(cell, message):
     cell = cell.replace("-","")
@@ -44,15 +45,19 @@ def sendTest():
     m = atextURL + message4
     r = requests.post(m, data=payload)
     return
-   
+
+cellNumber = sys.argv[1]
+
+validNumbers = getSubscribers()
+print validNumbers
+
+if validNumbers.find(cellNumber):
+    print "ATEXT TEST to " +  cellNumber
     
-print "ATEXT TEST"
-getSubscribers()
+    retVal = sendSMS(cellNumber, "1 2 3 4 5")
 
-#retVal = sendSMS("7329798073", "Word for Day Test")
-#print retVal
 
-print "ATEXT TEST DONE"
+print "DONE"
 
 
 

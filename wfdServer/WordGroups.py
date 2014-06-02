@@ -4,11 +4,12 @@ import datetime
 import pymongo
 from pymongo import Connection
 from pymongo import database
+from DB import *
 
-def getActiveWordList(dbHostName, dbPortNumber, campaignID):
+def getActiveWordList(campaignID):
 #    print "ACTIVE Words"
       
-    connection = Connection(dbHostName, dbPortNumber)
+    connection = Connection(getDBHost(), getDBPort())
     print "Connecting to Words"
     
     db = connection.meteor
@@ -35,9 +36,9 @@ def getActiveWordList(dbHostName, dbPortNumber, campaignID):
   
 #    print "End of Words"
 
-def getActiveWord(dbHostName, dbPortNumber, thisWord):
+def getActiveWord(thisWord):
 
-     connection = Connection(dbHostName, dbPortNumber)     
+     connection = Connection(getDBHost(), getDBPort())     
      wordGroupList = []
      print "Find This Word " + thisWord
      

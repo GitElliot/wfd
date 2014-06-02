@@ -5,12 +5,13 @@ import time
 import pymongo
 from pymongo import Connection
 from pymongo import database
+from DB import *
 
-def getActiveStudents(dbHostName, dbPortNumber, campaignID):
+def getActiveStudents(campaignID):
 #    print "ACTIVE Students"
     
     
-    connection = Connection(dbHostName, dbPortNumber)
+    connection = Connection(getDBHost(), getDBPort())
 #    print "Connecting to Students"
 
     try: 
@@ -38,9 +39,9 @@ def getActiveStudents(dbHostName, dbPortNumber, campaignID):
         print "GET ACTIVE STUDENT EXCEPTION"
 
 
-def studentAddLogLine(dbHostName, dbPortNumber, thisCellNumber, logLine):
+def studentAddLogLine(thisCellNumber, logLine):
     
-    connection = Connection(dbHostName, dbPortNumber)   
+    connection = Connection(getDBHost(), getDBPort())   
     db = connection.meteor
     print "Connected to Students (for status log)" 	
     
@@ -68,9 +69,9 @@ def studentAddLogLine(dbHostName, dbPortNumber, thisCellNumber, logLine):
     return
  
 
-def studentGetRecord(dbHostName, dbPortNumber, thisCellNumber):
+def studentGetRecord(thisCellNumber):
     
-    connection = Connection(dbHostName, dbPortNumber)   
+    connection = Connection(getDBHost(), getDBPort())   
     db = connection.meteor
     print "Connected to Students (for Get Record)" 	
     

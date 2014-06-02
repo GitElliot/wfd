@@ -1567,10 +1567,10 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
         Session.set('campaignCursor', Number(Session.get('campaignCursor')) +10);
     },
     'click .campaignStatusStart ':function(evt, tmpl){
-        alert('campaignStatusStart   Not Connected Yet');
+        mySetText('cstate', 'Run');
     },    
      'click .campaignStatusStop ':function(evt, tmpl){
-        alert('campaignStatusStop   Not Connected Yet');
+        mySetText('cstate', 'Stopped');
     },       
       'click .campaignStatusRestart ':function(evt, tmpl){
         alert('campaignStatusRestart  Not Connected Yet');

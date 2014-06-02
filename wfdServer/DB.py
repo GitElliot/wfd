@@ -1,7 +1,15 @@
+#!/usr/bin/python
 
-# These items need to be moved to a config file
+import datetime
+import time
+import os
+import os.path
+
+
 dbHostName = "localhost"
 dbPortNumber =  3001
+
+LogRoot = "wfdlogs"
 
 
 def getDBHost():
@@ -9,5 +17,21 @@ def getDBHost():
 
 def getDBPort():
     return 3001
-      
-      
+
+def myLog(line):
+    logFileName  = LogRoot + "/" + "WFD_" + time.strftime('%Y%m%d') + ".txt"
+    
+    try:
+        os.stat(LogRoot)
+    except:
+        print "LogRoot Directory Did Not Exist " + LogRoot
+        os.mkdir(LogRoot)
+        print "EXCEPT log"
+    try:
+        f = open(logFileName, "wa")
+        now = time.strftime('%Y%m%d %H:%M ')
+        f.write(now + line + "\n")
+        f.close()
+    except:
+        print "Log File Write Exception"
+        

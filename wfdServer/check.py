@@ -29,18 +29,29 @@ print "Campaign List"
 a = bool
     
         
-for camp in db.campaigns.find().sort("campaign", pymongo.ASCENDING):
-    print "->" + camp['campaign'] + "<-    "  + camp['_id'] + "   "  +  camp['cwordorder']
-    
-    try:
-        a = camp['friactive']
-        print "a is  " + str(a)
-    except Exception, e:
-        print  'Exception Error is: %s'  %e 
+#for camp in db.campaigns.find().sort("campaign", pymongo.ASCENDING):
+#    print "->" + camp['campaign'] + "<-    "  + camp['_id'] + "   "  +  camp['cwordorder']
+#    
+#        
         
-        
+#    
+#wordCollection = db.Words
+#for word in db.words.find().sort('seqnum'):
+#    print word['seqnum']  + "    "  + word['word']
+
+
+#
+#t = time.strftime('%H%M')
+#print t
+#
+#print "YYYMMDD"
+#logFileName  = "wfdlogs/WFD_" + time.strftime('%Y%m%d') + ".txt"
+#print logFileName
+
+#for arg in sys.argv:
+#    print arg
+
+print sys.argv[1]
     
-wordCollection = db.Words
-for word in db.words.find().sort('seqnum'):
-    print word['seqnum']  + "    "  + word['word']
+
 

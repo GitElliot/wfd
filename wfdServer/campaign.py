@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import datetime
+import time
 import pymongo
 from pymongo import Connection
 from pymongo import database
@@ -9,8 +10,19 @@ from atext import *
 
 
 def activeToday(camp, dayNumber):
-
+    print "activeToday()"
     try:
+        
+        
+        hhmmNow = time.strftime('%H%M')
+        campaignTime  = camp['sendtime']        # Time has to be in correct format
+        campaignTime = campaignTime.strip()
+        if len(campaignTime) != 4:
+            return False
+        
+        if campaignTime >= hhmmNow:
+            return False
+        
         if dayNumber == 0:
             return camp['monactive']
         
@@ -33,9 +45,10 @@ def activeToday(camp, dayNumber):
             return camp['sunactive']
     
     except:
-            return false
+            print 'except'
+            return False
       
-    return false
+    return False
 
 def getActiveCampaigns():
     print "GET ACTIVE CAMPAIGN"
