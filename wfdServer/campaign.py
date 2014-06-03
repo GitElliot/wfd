@@ -10,7 +10,7 @@ from atext import *
 
 
 def activeToday(camp, dayNumber):
-    print "activeToday()"
+#    print "activeToday()"
     try:
         
         
@@ -92,5 +92,38 @@ def getActiveCampaigns():
 
 print "Campaigns Now"
 
-
+def getActiveWordList(campaignID):
+    print "ACTIVE Word List Order"
+      
+    connection = Connection(getDBHost(), getDBPort())
+    print "Connecting to Campaigns"
+    
+    db = connection.meteor
+#    print "Connected to Words"    
+    
+    activeWordList = []
+    print "Active Word List Order"
+    
+    campaign = db.campaigns.find_one({"_id":campaignID})
+    
+    connection.close()
+    
+    if (campaign == ""):
+        return ""
+    
+    wordOrder = campaign['cwordorder']
+    
+    if (wordOrder == ""):
+        return ""
+    
+    wordOrderArray = wordOrder.split(",")
+    
+    for word in wordOrderArray:
+        if (len(word) > 0):
+            activeWordList.append(word)             
+ #           print "activeWordList  add- > " + word
+    
+    return activeWordList    
+#  
+##    print "End of Words"
     

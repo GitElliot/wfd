@@ -18,8 +18,6 @@ def getActiveStudents(campaignID):
         db = connection.meteor
         print "Connected to Students"
     
-        collection = db.students
-    
         activeStudentList = []
     
         print "Active Student List for Campaign " + campaignID
@@ -45,8 +43,6 @@ def studentAddLogLine(thisCellNumber, logLine):
     db = connection.meteor
     print "Connected to Students (for status log)" 	
     
-    collection = db.students    
-
     try: 
         student = db.students.find_one({'cell':thisCellNumber})
         
@@ -99,10 +95,9 @@ def studentReadyForNextMessage(student):
     
     s1 = student['studentStatus']
     
-    if (s1.find("<Campaign Done>") > 0):
+    if (s1.find("<Words Done>") > 0):
         return False
-        
-    
+           
     i1  = s1.rfind(nmt)                           ####  .....Next Message Time <NNNNNNNNNN.NN>
     
 #    print "Index of next message   "  + str(i1)
@@ -135,6 +130,52 @@ def studentReadyForNextMessage(student):
     return True
     
 #
+    
+def studentReadyForNextQuestion(student):
+    nmt = "Next Message Time <"
+    
+    if (student == ""):
+        return True
+    
+    s1 = student['studentStatus']
+    
+    if (s1.find("<Questions Start>") > 0):
+        return False
+           
+    i1  = s1.rfind(nmt)                           ####  .....Next Message Time <NNNNNNNNNN.NN>
+    
+#    print "Index of next message   "  + str(i1)
+    
+    if (i1 < 0):
+        return True
+    
+    i1 += len(nmt)   #Get to start of tick count
+    
+    s2 = s1[i1:]                                 #### NNNNNNNNNN.NN>
+    
+    i2 = s2.find(">")
+    if (i2 < 0):
+        return True
+    
+    s3 = s2[:i2]                                #### NNNNNNNNNN.NN
+    
+    now = time.time()
+    
+    delta = float(s3) - now
+
+#    print "Time Now " + str(now)
+    print "Time Difference " + str(delta)
+    
+    if (delta < 0.0):
+        return True
+    else:
+        return False
+    
+    return True
+    
+#
+
+
 # Next Word is stored in Student Record
 def studentGetNextWord(student):
     nmt = "Next Word <"

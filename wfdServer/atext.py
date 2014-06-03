@@ -46,18 +46,21 @@ def sendTest():
     r = requests.post(m, data=payload)
     return
 
-cellNumber = sys.argv[1]
+def test():
 
-validNumbers = getSubscribers()
-print validNumbers
 
-if validNumbers.find(cellNumber):
-    print "ATEXT TEST to " +  cellNumber
+    cellNumber = sys.argv[1]
+
+    validNumbers = getSubscribers()
+    print validNumbers
+
+    if validNumbers.find(cellNumber):
+        print "ATEXT TEST to " +  cellNumber
     
     retVal = sendSMS(cellNumber, "1 2 3 4 5")
 
 
-print "DONE"
+    print "DONE"
 
 
 
