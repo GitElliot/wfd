@@ -92,7 +92,7 @@ def getActiveWordQuestion(thisWord):
      try: 
         db = connection.meteor    
         collection = db.words
-        word = db.words.find_one({'word':thisWord})
+        word = db.words.find_one({'seqnum':thisWord})
         question = word['question']
         
      except:
@@ -112,7 +112,7 @@ def getActiveWordAnswer(thisWord, ansNumber):
      try: 
         db = connection.meteor    
         collection = db.words
-        word = db.words.find_one({'word':thisWord})
+        word = db.words.find_one({'seqnum':thisWord})
         print "FOUND ANSWER"
         answer = ""
         

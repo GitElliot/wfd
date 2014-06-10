@@ -86,7 +86,8 @@ def studentGetRecord(thisCellNumber):
         
     connection.close()
     return  "" 
-    
+ 
+   
 def studentReadyForNextMessage(student):
     nmt = "Next Message Time <"
     
@@ -120,7 +121,7 @@ def studentReadyForNextMessage(student):
     delta = float(s3) - now
 
 #    print "Time Now " + str(now)
-    print "Time Difference " + str(delta)
+#    print "Time Difference " + str(delta)
     
     if (delta < 0.0):
         return True
@@ -132,6 +133,8 @@ def studentReadyForNextMessage(student):
 #
     
 def studentReadyForNextQuestion(student):
+    
+    print "Student Ready For Next Question?"
     nmt = "Next Message Time <"
     
     if (student == ""):
@@ -139,7 +142,7 @@ def studentReadyForNextQuestion(student):
     
     s1 = student['studentStatus']
     
-    if (s1.find("<Questions Start>") > 0):
+    if (s1.find("<Start Questions>") < 0):
         return False
            
     i1  = s1.rfind(nmt)                           ####  .....Next Message Time <NNNNNNNNNN.NN>
@@ -164,7 +167,11 @@ def studentReadyForNextQuestion(student):
     delta = float(s3) - now
 
 #    print "Time Now " + str(now)
-    print "Time Difference " + str(delta)
+#    print "Time Difference Question" + str(delta)
+
+    if ((s1.find("<Wait For Answer>") > 0) and (delta < 0.0)):
+        print "Waiting for Answer"
+        return False
     
     if (delta < 0.0):
         return True
@@ -187,7 +194,7 @@ def studentGetNextWord(student):
     
     i1  = s1.rfind(nmt)                           ####  .....Next Word <WWWWWWWWWW>
     
-#    print "Index of next message   "  + str(i1)
+    print "Index of next message   "  + str(i1)
     
     if (i1 < 0):
         return ""

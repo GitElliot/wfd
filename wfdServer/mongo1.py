@@ -13,6 +13,8 @@ from atext import *
 from WordGroups import *
 from DB import *
 
+pauseBetweenWords = 5           # 5 minutes
+pauseBetweenQuestions = 10      # 10 minutes 
 
 
 def getWords():
@@ -77,22 +79,24 @@ for i in range(0, 320):
                 activeWordList = getActiveWordList(activeCampaignList[campaignIndex])
                 
                 for activeWordIndex in range (0, len(activeWordList)):
+                    print "ACTIVE WORD LIST ElEMENTS " + activeWordList[activeWordIndex]
+                                    
+                
+                for activeWordIndex in range (0, len(activeWordList)):
                     
                     activeWord = getWordBySeqNum(activeWordList[activeWordIndex])
                     print "activeWord -> " + activeWord
                     
                     if ((nextWord == "") or (activeWordList[activeWordIndex]  == nextWord)):
-                        
-#                        sendSMS(activeStudentList[studentIndex], activeWordList[activeWordIndex])                    
-            
+                                         
                         localtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         print localtime
-                        logLine =  localtime + " Send Active Word " + activeWord + "   <<" + activeWordList[activeWordIndex] + ">>  to student " + activeStudentList[studentIndex]
+                        logLine =  localtime + "Word Tag (" + activeWord + ")   <<" + activeWordList[activeWordIndex] + ">>  to student " + activeStudentList[studentIndex]
                         print logLine
                         studentAddLogLine(activeStudentList[studentIndex], logLine)
                         
                         currentMessageTime = time.time()
-                        nextMessageTime = currentMessageTime + (5 * 60)   # minutes * seconds
+                        nextMessageTime = currentMessageTime + (pauseBetweenWords * 60)   # minutes * seconds
                                               
                         if (activeWordIndex + 1 < len(activeWordList)):                      
                             logLine = "Next Message Time <" + str(nextMessageTime) + ">"
@@ -102,9 +106,13 @@ for i in range(0, 320):
                         else:
                             logLine = "<Words Done>"
                             print logLine
-                            studentAddLogLine(activeStudentList[studentIndex], logLine)                        
-                
-        
+                            studentAddLogLine(activeStudentList[studentIndex], logLine)
+                            logLine = "<Start Questions>"
+                            print logLine
+                            studentAddLogLine(activeStudentList[studentIndex], logLine)                                   
+                            logLine = "Next Message Time <" + str(nextMessageTime) + ">"                
+                            print logLine
+                            studentAddLogLine(activeStudentList[studentIndex], logLine)        
                         ## Get WordGroup from DB to send
                         thisWordGroup = getActiveWord(activeWordList[activeWordIndex])
             
@@ -129,22 +137,69 @@ for i in range(0, 320):
                    activeWordList = getActiveWordList(activeCampaignList[campaignIndex])                   
                    thisQuestion = getActiveWordQuestion(activeWordList[activeWordIndex])
                    
-                   retVal = sendSMS(activeStudentList[studentIndex], thisQuestion)
+                   logLine = "Active Word <" + activeWordList[activeWordIndex] + ">"
+                   print logLine
+                   studentAddLogLine(activeStudentList[studentIndex], logLine)
+                   
                    logLine = "Question -> " + thisQuestion
-                   studentAddLogLine(activeStudentList[studentIndex], logLine)                                      
-                   print "This question       " + thisQuestion
+                   print logLine
+                   studentAddLogLine(activeStudentList[studentIndex], logLine)
+                   retVal = sendSMS(activeStudentList[studentIndex], thisQuestion)
+                   
                    
                    #Ans 1 
-                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 1)
-                   logLine = "ANS 1 -> " + thisAnswer
+                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 1).strip()
+                   if len(thisAnswer) > 0:                   
+                       logLine = "ANS 1 -> " + thisAnswer                
+                       print logLine
+                       retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
+                       studentAddLogLine(activeStudentList[studentIndex], logLine)
+                       
+                   #Ans 2 
+                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 2).strip()
+                   if len(thisAnswer) > 0:                   
+                       logLine = "ANS 2 -> " + thisAnswer                
+                       print logLine
+                       retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
+                       studentAddLogLine(activeStudentList[studentIndex], logLine)
+                       
+                   #Ans 3 
+                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 3).strip()
+                   if len(thisAnswer) > 0:                   
+                       logLine = "ANS 3 -> " + thisAnswer                
+                       print logLine
+                       retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
+                       studentAddLogLine(activeStudentList[studentIndex], logLine)                       
+                      
+                   #Ans 4 
+                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 4).strip()
+                   if len(thisAnswer) > 0:                   
+                       logLine = "ANS 4 -> " + thisAnswer                
+                       print logLine
+                       retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
+                       studentAddLogLine(activeStudentList[studentIndex], logLine)                          
+                      
+                   #Ans 5 
+                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 5).strip()
+                   if len(thisAnswer) > 0:                   
+                       logLine = "ANS 5 -> " + thisAnswer                
+                       print logLine
+                       retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
+                       studentAddLogLine(activeStudentList[studentIndex], logLine)
+                       
+                       
+                   currentMessageTime = time.time()
+                   nextMessageTime = currentMessageTime + (pauseBetweenQuestions * 60)   # minutes * seconds
                    
+                   logLine = "Next Message Time <" + str(nextMessageTime) + ">"
                    print logLine
-                   retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
-                   logLine = "<Questions Start>"
-                   print logLine
-                   studentAddLogLine(activeStudentList[studentIndex], logLine)                
+                   studentAddLogLine(activeStudentList[studentIndex], logLine)
                    
-               
+                   logLine = "<Wait For Answer>"
+                   print logLine
+                   studentAddLogLine(activeStudentList[studentIndex], logLine)
+                   
+                   
             else:    
                    print "Do Not Send Message"
 
