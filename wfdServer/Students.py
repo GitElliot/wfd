@@ -83,6 +83,7 @@ def studentGetRecord(thisCellNumber):
     
     except Exception, e:
         print "Student Get Record EXCEPTION -- %s" % e
+        return ""
         
     connection.close()
     return  "" 
@@ -142,7 +143,13 @@ def studentReadyForNextQuestion(student):
     
     s1 = student['studentStatus']
     
-    if (s1.find("<Start Questions>") < 0):
+    
+    if ((s1.find("<Words Done>")) < 0):         # Not ready for to send questions
+        print "<Words Done>"
+        return False    
+    
+    if (s1.find("<Start Questions>") > 0):      # Questions in Progress
+        print "<Start Questions>"
         return False
            
     i1  = s1.rfind(nmt)                           ####  .....Next Message Time <NNNNNNNNNN.NN>
@@ -165,27 +172,46 @@ def studentReadyForNextQuestion(student):
     now = time.time()
     
     delta = float(s3) - now
-
-#    print "Time Now " + str(now)
-#    print "Time Difference Question" + str(delta)
-
-    if ((s1.find("<Wait For Answer>") > 0) and (delta < 0.0)):
-        print "Waiting for Answer"
+    
+    if (delta > 0.0):
         return False
     
-    if (delta < 0.0):
-        return True
-    else:
-        return False
-    
-    return True
-    
-#
+    return True                                 # Okay to send out first series of questions
 
 
-# Next Word is stored in Student Record
+# Next Word is stored in Student Record    Check from the bottom up
 def studentGetNextWord(student):
     nmt = "Next Word <"
+    
+    if (student == ""):
+        return ""
+    
+    s1 = student['studentStatus'];
+    
+    i1  = s1.rfind(nmt)                           ####  .....Next Word <WWWWWWWWWW>
+    
+    print "Index of next message   "  + str(i1)
+    
+    if (i1 < 0):
+        return ""
+    
+    i1 += len(nmt)   #Get to start of tick count
+    
+    s2 = s1[i1:]                                 #### WWWWWWWWWWWW>
+    
+    i2 = s2.find(">")
+    if (i2 < 0):
+        return ""
+    
+    s3 = s2[:i2]                                ####  WWWWWWWWWWWWW
+      
+    return s3
+
+
+
+# Next Tag Value   stored in Student Record from the Bottom up
+def studentGetNextTagValue(tag, student):
+    nmt = tag
     
     if (student == ""):
         return ""

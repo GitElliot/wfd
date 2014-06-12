@@ -130,14 +130,19 @@ for i in range(0, 320):
                         break
             
             elif (studentReadyForNextQuestion(student)):
-                   print "Send Question with first possible answer"
+                   print "Send Question with first answers"
+                   
+                   
+                   logLine = "<Start Questions>"
+                   print logLine
+                   studentAddLogLine(activeStudentList[studentIndex], logLine)                   
                             
                    activeWordIndex = 0
                    activeWordList = []
                    activeWordList = getActiveWordList(activeCampaignList[campaignIndex])                   
                    thisQuestion = getActiveWordQuestion(activeWordList[activeWordIndex])
                    
-                   logLine = "Active Word <" + activeWordList[activeWordIndex] + ">"
+                   logLine = "Next Word <" + activeWordList[activeWordIndex] + ">"
                    print logLine
                    studentAddLogLine(activeStudentList[studentIndex], logLine)
                    
@@ -195,7 +200,7 @@ for i in range(0, 320):
                    print logLine
                    studentAddLogLine(activeStudentList[studentIndex], logLine)
                    
-                   logLine = "<Wait For Answer>"
+                   logLine = "Wait For Answer <" + activeWordList[activeWordIndex] + ">"
                    print logLine
                    studentAddLogLine(activeStudentList[studentIndex], logLine)
                    

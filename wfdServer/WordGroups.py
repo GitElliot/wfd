@@ -79,9 +79,7 @@ def getWordBySeqNum(seqNum):
      connection.close()
         
      return thisWord   
-    
-    
-    
+      
         
 def getActiveWordQuestion(thisWord):
 
@@ -113,6 +111,8 @@ def getActiveWordAnswer(thisWord, ansNumber):
         db = connection.meteor    
         collection = db.words
         word = db.words.find_one({'seqnum':thisWord})
+        connection.close()
+        
         print "FOUND ANSWER"
         answer = ""
         
@@ -132,6 +132,68 @@ def getActiveWordAnswer(thisWord, ansNumber):
         print "EXCEPTION -  ANSWER QUESTION"
         answer = ""
         
-     connection.close()
         
-     return answer  
+     return answer
+    
+def getActiveWordAnswerTF(thisWord, ansNumber):
+
+     connection = Connection(getDBHost(), getDBPort())     
+     question = ""
+     print "Find This Word Answer TF " + thisWord  +  "    Answer Number  " + str(ansNumber)
+        
+     try: 
+        db = connection.meteor    
+        word = db.words.find_one({'seqnum':thisWord})
+        connection.close()
+        
+        print "FOUND ANSWER"
+        
+        answer = "F"
+        
+        if ansNumber > 5:
+            answer = "Answer Number Error 2"
+            
+        if ansNumber < 1:
+            answer = "Answer Number Error 1"
+            
+        ansIndex = "active" + str(ansNumber)
+        
+        
+        if (word[ansIndex] == True):
+            answer = "T"
+                   
+        
+     except:
+        print "EXCEPTION -  TF ANSWER QUESTION"
+        
+        
+     return answer
+
+    
+def getActiveWordRemediation(thisWord, rightWrong):
+
+     connection = Connection(getDBHost(), getDBPort())     
+     question = ""
+     print "Find Correct Remediation for word " + thisWord  +  "   Right/Wrong  " + rightWrong
+        
+     try: 
+        db = connection.meteor    
+        word = db.words.find_one({'seqnum':thisWord})
+        connection.close()
+        
+        print "Found Word"
+        
+        if (rightWrong == "Correct"):
+            remediation = word['remedifcorrect']
+        else:
+            remediation = word['remedifwrong']
+            
+        return remediation    
+        
+                   
+        
+     except:
+        print "EXCEPTION -  In getActiveWordRemediation"
+        
+        
+     return ""

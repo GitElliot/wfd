@@ -53,6 +53,18 @@ def sendTest():
     r = requests.post(m, data=payload)
     return
 
+def getNextListItem(list, currentItem):
+    l = len(list)
+    for i in range(0, l):
+        
+        if (currentItem == list[i] and ((i + 1) >= l)):
+            return "00000"
+            
+        if (currentItem == list[i]):
+            return list[i + 1] 
+    return "00000"
+
+
 
 #
 #  Main Program Starts here
@@ -112,16 +124,64 @@ if validNumbers.find(cellNumber, 11):
 localCellNumber = cellNumber[1:4] + "-" + cellNumber[4:7] + "-" + cellNumber[7:11]
 print "Send Test Message  Local Cell Number " + localCellNumber
 
-studentAddLogLine(localCellNumber, "<ANSWER >" + message + "</ANSWER>")
-
-
 student = studentGetRecord(localCellNumber)
 
-print student['studentStatus']
+if (student == ""):
+    exit()
     
+studentStatus = student['studentStatus']
+
+if (studentStatus == ""):
+    exit()
+      
+    
+if (studentStatus.find("Wait For Answer") < 0):
+    exit()
+    
+if (studentStatus.find("Campaign Done") > 0):
+    exit()
 
 
-print "DONE"
+studentAddLogLine(localCellNumber, "Last Answer <" + message + ">")
+
+student = studentGetRecord(localCellNumber)
+nextWord = studentGetNextWord(student)
+
+ans =  getActiveWordAnswerTF(nextWord, message)
+
+remediationMessage = "Remediation Message"
+
+if (ans == "T"):
+    remediationMessage =  getActiveWordRemediation(nextWord, "Correct") 
+else:
+    remediationMessage =  getActiveWordRemediation(nextWord, "Wrong")    
+    
+sendSMS(localCellNumber, remediationMessage)
+
+studentAddLogLine(localCellNumber, "Remediation ->" + remediationMessage)
+
+campaign  = "Campaign Line  = " + student['campaign']
+studentAddLogLine(localCellNumber, campaign)
+if (campaign == ""):
+    studentAddLogLine(localCellNumber, "EXIT")
+    exit()
+
+activeWordList = []    
+activeWordList = getActiveWordList(student['campaign'])
+thisWord = nextWord
+
+nextWord = getNextListItem(activeWordList, thisWord)
+
+if (nextWord == "00000"):
+    logLine = "Campaign Done"
+    studentAddLogLine(localCellNumber, logLine)
+    exit()
+
+
+logLine = "Next Word <" + nextWord + ">"    
+studentAddLogLine(localCellNumber, logLine)
+
+print "DONE !!!"
 
 
 
