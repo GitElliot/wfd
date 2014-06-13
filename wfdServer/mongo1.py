@@ -104,10 +104,8 @@ for i in range(0, 320):
                             print logLine
                             studentAddLogLine(activeStudentList[studentIndex], logLine)
                         else:
-                            logLine = "<Words Done>"
-                            print logLine
                             studentAddLogLine(activeStudentList[studentIndex], logLine)
-                            logLine = "<Start Questions>"
+                            logLine = "<Words Done>"
                             print logLine
                             studentAddLogLine(activeStudentList[studentIndex], logLine)                                   
                             logLine = "Next Message Time <" + str(nextMessageTime) + ">"                
@@ -131,8 +129,7 @@ for i in range(0, 320):
             
             elif (studentReadyForNextQuestion(student)):
                    print "Send Question with first answers"
-                   
-                   
+                                     
                    logLine = "<Start Questions>"
                    print logLine
                    studentAddLogLine(activeStudentList[studentIndex], logLine)                   

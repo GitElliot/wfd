@@ -181,8 +181,66 @@ if (nextWord == "00000"):
 logLine = "Next Word <" + nextWord + ">"    
 studentAddLogLine(localCellNumber, logLine)
 
-print "DONE !!!"
+thisQuestion = getActiveWordQuestion(nextWord)
 
+
+logLine = "Question -> " + thisQuestion
+
+studentAddLogLine(localCellNumber, logLine)
+retVal = sendSMS(localCellNumber, thisQuestion)
+
+
+#Ans 1 
+thisAnswer = getActiveWordAnswer(nextWord, 1).strip()
+if len(thisAnswer) > 0:                   
+    logLine = "ANS 1 -> " + thisAnswer                
+    print logLine
+    retVal = sendSMS(localCellNumber, thisAnswer)
+    studentAddLogLine(localCellNumber, logLine)
+    
+#Ans 2 
+thisAnswer = getActiveWordAnswer(nextWord, 2).strip()
+if len(thisAnswer) > 0:                   
+    logLine = "ANS 2 -> " + thisAnswer                
+    print logLine
+    retVal = sendSMS(localCellNumber, thisAnswer)
+    studentAddLogLine(localCellNumber, logLine)
+    
+#Ans 3 
+thisAnswer = getActiveWordAnswer(nextWord, 3).strip()
+if len(thisAnswer) > 0:                   
+    logLine = "ANS 3 -> " + thisAnswer                
+    print logLine
+    retVal = sendSMS(localCellNumber, thisAnswer)
+    studentAddLogLine(localCellNumber, logLine)                       
+   
+#Ans 4 
+thisAnswer = getActiveWordAnswer(nextWord, 4).strip()
+if len(thisAnswer) > 0:                   
+    logLine = "ANS 4 -> " + thisAnswer                
+    print logLine
+    retVal = sendSMS(localCellNumber, thisAnswer)
+    studentAddLogLine(localCellNumber, logLine)                          
+   
+#Ans 5 
+thisAnswer = getActiveWordAnswer(nextWord, 5).strip()
+if len(thisAnswer) > 0:                   
+    logLine = "ANS 5 -> " + thisAnswer                
+    print logLine
+    retVal = sendSMS(localCellNumber, thisAnswer)
+    studentAddLogLine(localCellNumber, logLine)
+    
+    
+currentMessageTime = time.time()
+nextMessageTime = currentMessageTime + (pauseBetweenQuestions * 60)   # minutes * seconds
+
+logLine = "Next Message Time <" + str(nextMessageTime) + ">"
+print logLine
+studentAddLogLine(localCellNumber, logLine)
+
+logLine = "Wait For Answer <" + nextWord + ">"
+print logLine
+studentAddLogLine(localCellNumber, logLine)
 
 
 

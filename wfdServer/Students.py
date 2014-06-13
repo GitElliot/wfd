@@ -145,11 +145,11 @@ def studentReadyForNextQuestion(student):
     
     
     if ((s1.find("<Words Done>")) < 0):         # Not ready for to send questions
-        print "<Words Done>"
+#        print "<Words Done>"
         return False    
     
     if (s1.find("<Start Questions>") > 0):      # Questions in Progress
-        print "<Start Questions>"
+ #       print "<Start Questions>"
         return False
            
     i1  = s1.rfind(nmt)                           ####  .....Next Message Time <NNNNNNNNNN.NN>
