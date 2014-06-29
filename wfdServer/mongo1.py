@@ -7,8 +7,12 @@ import sys
 from pymongo import Connection
 from pymongo import database
 
-from campaign  import *
-from Students  import *
+import campaign
+import Students
+
+
+#from campaign  import *
+#from Students  import *
 from atext import *
 from WordGroups import *
 from DB import *
@@ -50,22 +54,22 @@ for i in range(0, 320):
 
     print "MAIN LOOP COUNT " + str(i)
 
-    activeCampaignList = getActiveCampaigns()
+    activeCampaignList = campaign.getActiveCampaigns()
     
     print "Active Campaign Count " + str(len(activeCampaignList))
     for campaignIndex in range (0,  len(activeCampaignList)):
         
         print "Start Campaign " + activeCampaignList[campaignIndex]
      
-        activeStudentList = getActiveStudents(activeCampaignList[campaignIndex])
+        activeStudentList = Students.getActiveStudents(activeCampaignList[campaignIndex])
      
         wordIndex = 0
         for studentIndex in range (0,  len(activeStudentList)):
             print "STUDENT CELL " + activeStudentList[studentIndex]
             
-            student = studentGetRecord(activeStudentList[studentIndex])
+            student = Students.studentGetRecord(activeStudentList[studentIndex])
             
-            if (studentReadyForNextMessage(student)):                        # Word Groups 
+            if (Students.studentReadyForNextMessage(student)):                        # Word Groups 
 
 #               Time to send next message to student.  It could be the                 
                                               
@@ -93,7 +97,7 @@ for i in range(0, 320):
                         print localtime
                         logLine =  localtime + "Word Tag (" + activeWord + ")   <<" + activeWordList[activeWordIndex] + ">>  to student " + activeStudentList[studentIndex]
                         print logLine
-                        studentAddLogLine(activeStudentList[studentIndex], logLine)
+                        Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                         
                         currentMessageTime = time.time()
                         nextMessageTime = currentMessageTime + (pauseBetweenWords * 60)   # minutes * seconds
@@ -102,15 +106,15 @@ for i in range(0, 320):
                             logLine = "Next Message Time <" + str(nextMessageTime) + ">"
                             logLine += "Next Word <" + activeWordList[activeWordIndex + 1] + ">"
                             print logLine
-                            studentAddLogLine(activeStudentList[studentIndex], logLine)
+                            Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                         else:
-                            studentAddLogLine(activeStudentList[studentIndex], logLine)
+                            Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                             logLine = "<Words Done>"
                             print logLine
-                            studentAddLogLine(activeStudentList[studentIndex], logLine)                                   
+                            Students.studentAddLogLine(activeStudentList[studentIndex], logLine)                                   
                             logLine = "Next Message Time <" + str(nextMessageTime) + ">"                
                             print logLine
-                            studentAddLogLine(activeStudentList[studentIndex], logLine)        
+                            Students.studentAddLogLine(activeStudentList[studentIndex], logLine)        
                         ## Get WordGroup from DB to send
                         thisWordGroup = getActiveWord(activeWordList[activeWordIndex])
             
@@ -127,12 +131,12 @@ for i in range(0, 320):
                             print retVal
                         break
             
-            elif (studentReadyForNextQuestion(student)):
+            elif (Students.studentReadyForNextQuestion(student)):
                    print "Send Question with first answers"
                                      
                    logLine = "<Start Questions>"
                    print logLine
-                   studentAddLogLine(activeStudentList[studentIndex], logLine)                   
+                   Students.studentAddLogLine(activeStudentList[studentIndex], logLine)                   
                             
                    activeWordIndex = 0
                    activeWordList = []
@@ -141,11 +145,11 @@ for i in range(0, 320):
                    
                    logLine = "Next Word <" + activeWordList[activeWordIndex] + ">"
                    print logLine
-                   studentAddLogLine(activeStudentList[studentIndex], logLine)
+                   Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                    
                    logLine = "Question -> " + thisQuestion
                    print logLine
-                   studentAddLogLine(activeStudentList[studentIndex], logLine)
+                   Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                    retVal = sendSMS(activeStudentList[studentIndex], thisQuestion)
                    
                    
@@ -155,7 +159,7 @@ for i in range(0, 320):
                        logLine = "ANS 1 -> " + thisAnswer                
                        print logLine
                        retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
-                       studentAddLogLine(activeStudentList[studentIndex], logLine)
+                       Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                        
                    #Ans 2 
                    thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 2).strip()
@@ -163,7 +167,7 @@ for i in range(0, 320):
                        logLine = "ANS 2 -> " + thisAnswer                
                        print logLine
                        retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
-                       studentAddLogLine(activeStudentList[studentIndex], logLine)
+                       Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                        
                    #Ans 3 
                    thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 3).strip()
@@ -171,7 +175,7 @@ for i in range(0, 320):
                        logLine = "ANS 3 -> " + thisAnswer                
                        print logLine
                        retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
-                       studentAddLogLine(activeStudentList[studentIndex], logLine)                       
+                       Students.studentAddLogLine(activeStudentList[studentIndex], logLine)                       
                       
                    #Ans 4 
                    thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 4).strip()
@@ -179,7 +183,7 @@ for i in range(0, 320):
                        logLine = "ANS 4 -> " + thisAnswer                
                        print logLine
                        retVal = sendSMS(activeStudentList[studentIndex], thisAnswer)
-                       studentAddLogLine(activeStudentList[studentIndex], logLine)                          
+                       Students.studentAddLogLine(activeStudentList[studentIndex], logLine)                          
                       
                    #Ans 5 
                    thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 5).strip()
@@ -195,11 +199,11 @@ for i in range(0, 320):
                    
                    logLine = "Next Message Time <" + str(nextMessageTime) + ">"
                    print logLine
-                   studentAddLogLine(activeStudentList[studentIndex], logLine)
+                   Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                    
                    logLine = "Wait For Answer <" + activeWordList[activeWordIndex] + ">"
                    print logLine
-                   studentAddLogLine(activeStudentList[studentIndex], logLine)
+                   Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                    
                    
             else:    
