@@ -173,19 +173,26 @@
 	     after sending &nbsp;<input type="text" class="sendcount tbh" name="sendaftercount" value="{{campaign.sendaftercount}}" id="sendaftercount">
 	     &nbsp;words.
 	</div>
-       &nbsp;&nbsp;&nbsp;<b>Do not send words on these dates:</b> &nbsp;	
+       &nbsp;&nbsp;&nbsp;<b>Do not send words on these dates:</b> &nbsp;
 	<div class="sendBlock">
 	    &nbsp;&nbsp;
-
-	     
-	     
-	     
+	     	     
 	     
         <table>
             <tr>
-                <td> &nbsp;&nbsp;
-	     Date &nbsp;<input type="text" class="xdate tbh" name="xdate" value="{{campaign.xdate}}" id="xdate">
-	     &nbsp;&nbsp; mm/dd/yyyy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluded Date List
+                <td> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+	     Exclude Date &nbsp; <br>
+	       
+             &nbsp;
+	     <input type="text" class="xdate datepicker" name="xdate" value="{{campaign.xdate}}" id="xdate">
+	     
+	     <label for="xdate" class="add-on wicon"> <i class="icon-calendar"></i> </label>	       
+
+	     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	     
+	     Excluded Date List
         <br> &nbsp;&nbsp;
          <a href="#" class="btn btn-success addxdate" >Add</a>
          <a href="#" class="btn btn-success removexdate" >Remove</a>                        
@@ -195,7 +202,7 @@
                 <td>
 	    
         &nbsp;&nbsp;&nbsp;
-	<textarea readonly  class="xdatelist" name="xdatelist" value="{{campaign.xdatelist}}" id="xdatelist" rows="5" cols="55"></textarea>    
+	<textarea readonly  class="xdatelist" name="xdatelist" value="{{campaign.xdatelist}}" id="xdatelist" rows="5" cols="100"></textarea>    
             
                     
                 </td>

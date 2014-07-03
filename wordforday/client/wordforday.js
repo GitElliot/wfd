@@ -1680,8 +1680,8 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
         myRedAlert("Exclude Date Entered is invalid         mm/dd/yyyy");
         return;
       }     
-//      if (xdatelist.contains(xdate)) {
-        if (xdatelist.indexOf(xdate)) {
+
+      if ((xdatelist.length > 0) && (xdatelist.indexOf(xdate) >= 0)) {
         myAlert("Date already on excluded list");
         return;
       }     
@@ -1732,6 +1732,10 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
     },
    'click .close':function(evt, tmpl) {
     },
+    
+    'click .xdate':function(evt, tmpl){
+       $('#xdate').datepicker();    
+    }
   })
           
      

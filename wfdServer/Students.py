@@ -3,9 +3,11 @@
 import datetime
 import time
 import pymongo
+import DB
+import myLog
 from pymongo import Connection
 from pymongo import database
-from DB import *
+
 
 def getActiveStudents(campaignID):
 #    print "ACTIVE Students"
@@ -89,13 +91,16 @@ def studentGetRecord(thisCellNumber):
     return  "" 
  
    
-def studentReadyForNextMessage(student):
+def studentReadyForNextMessage(student, wordsPerDay):
     nmt = "Next Message Time <"
+    rwfd = "RemainingWFD <"
     
     if (student == ""):
         return True
     
     s1 = student['studentStatus']
+    
+    print "STUDENT STRUCTURE CHECK     cell " + student['cell']
     
     if (s1.find("<Words Done>") > 0):
         return False
@@ -105,7 +110,7 @@ def studentReadyForNextMessage(student):
 #    print "Index of next message   "  + str(i1)
     
     if (i1 < 0):
-        return True
+        return True                              #### String not found, must be okay to send message
     
     i1 += len(nmt)   #Get to start of tick count
     
@@ -113,7 +118,9 @@ def studentReadyForNextMessage(student):
     
     i2 = s2.find(">")
     if (i2 < 0):
-        return True
+        myLog.Log("Data Error - studentReadyForNextMessage '>' tag missing")
+        myLog.log(s1)
+        return True                             #### Something not right,  send message anyway
     
     s3 = s2[:i2]                                #### NNNNNNNNNN.NN
     
@@ -123,6 +130,37 @@ def studentReadyForNextMessage(student):
 
 #    print "Time Now " + str(now)
 #    print "Time Difference " + str(delta)
+
+
+    if (delta > 0):
+        return False                           #### Not enough time has passed
+    
+    try:       # Catch possible exceptions for dealing with multiple words per day
+        
+        remainingWordTag = studentGetNextTagValue(rwfd, s1)    # Remaining Word For Day Count
+    
+        if (remainingWordTag == ""):
+            return True
+        
+        rwc = remainingWordTag.split(",")     #### (day of week 0 - 6, remaining words for count)
+        dayOfWeek = int(rwc[0])
+        count = int(rwc[1])
+        
+        today = datetime.date.today()
+        dayNumber = today.weekday()
+        
+        # If today is differernt from day last messsage was sent,  then send meessage today
+        newrwdString = rfwd + str(dayNumber) + "," + str(wordsPerDay - 1) + ">"
+        
+        
+        # If last message was sent today, determine if we can send another
+        
+    except:
+        myLog.Log("Data Exception - studentReadyForNextMessage (multiple words per day)")
+        myLog.log(s1)
+        return True
+    
+    
     
     if (delta < 0.0):
         return True
@@ -225,7 +263,7 @@ def studentGetNextTagValue(tag, student):
     if (i1 < 0):
         return ""
     
-    i1 += len(nmt)   #Get to start of tick count
+    i1 += len(nmt)   
     
     s2 = s1[i1:]                                 #### WWWWWWWWWWWW>
     

@@ -9,6 +9,23 @@ from DB import *
 from atext import *
 
 
+def excludeToday(campName, xlist):
+    
+   print "Excluded date list " + xlist
+           
+   if (xlist == ""):
+     return False
+
+   mmddyyyy = datetime.datetime.now().strftime("%m/%d/%Y")
+   
+   if xlist.find(mmddyyyy):
+      print "EXCLUDE DEBUG mmddyyyy " + mmddyyyy + "    xlist-> " + xlist
+      return True
+   
+   return False
+    
+    
+
 def activeToday(camp, dayNumber):
 #    print "activeToday()"
     try:
@@ -66,16 +83,25 @@ def getActiveCampaigns():
     collection = db.campaigns
     
     activeCampaignList = []
-    print "Active Campaign List"
+    print "Campaign List"
     
         
     for camp in db.campaigns.find().sort("campaign", pymongo.ASCENDING):
 
-#        print "Campaign Loop " + camp['campaign']          
+#        print "Campaign Loop " + camp['campaign']
+#        print "Campaign Exclude Dates " + camp['xdatelist']
         try:
+            if ((camp['campaign'], camp['xdatelist']) == True):
+                print "Campaign Excluded Today - " + camp['campaign'] 
+                continue
+            
+            print "Campaign Not Excluded Today - " + camp['campaign']        
+                      
             if activeToday(camp, dayNumber):            
-                print "Campaign " + camp['campaign']  + " is Active"
-                activeCampaignList.append(camp['_id'])            
+                print "Campaign Active Today - " + camp['campaign']
+                activeCampaignList.append(camp['_id'])
+            else:
+                print "Campaign Not Active Today - " + camp['campaign']
                        
         except Exception, e:
                 print "getActiveCampaigns EXCEPTION -- %s" % e
@@ -90,7 +116,7 @@ def getActiveCampaigns():
 #    print "End of Campaigns"
 
 
-print "Campaigns Now"
+#   print "Campaigns Now"
 
 def getActiveWordList(campaignID):
     print "ACTIVE Word List Order"
@@ -127,3 +153,32 @@ def getActiveWordList(campaignID):
 #  
 ##    print "End of Words"
     
+
+def getCampaignWordsPerDay(campaignID):
+    print "Get Campaign Words Per Day"
+      
+    connection = Connection(getDBHost(), getDBPort())
+    print "Connecting to Campaigns"
+    
+    try:
+        
+        db = connection.meteor
+         
+        campaign = db.campaigns.find_one({"_id":campaignID})
+        
+        connection.close()
+        
+        if (campaign == ""):
+            return "1"
+        
+        wordsPerDay = campaign['sendcount']
+        
+        if (wordsPerDay == ""):
+            return "1"
+    
+        return wordsPerDay
+    
+    except:
+        return "1"
+
+

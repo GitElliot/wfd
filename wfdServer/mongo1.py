@@ -7,12 +7,10 @@ import sys
 from pymongo import Connection
 from pymongo import database
 
+import myLog
 import campaign
 import Students
 
-
-#from campaign  import *
-#from Students  import *
 from atext import *
 from WordGroups import *
 from DB import *
@@ -43,7 +41,7 @@ def getWords():
     
     
 print "Start Here"
-myLog("WFD Server Start")
+myLog.Log("WFD Server Start")
 
 # Get Active Campaign List for today
 activeCampaignList = []
@@ -52,7 +50,9 @@ activeCampaignList = []
 for i in range(0, 320):
     time.sleep(10)
 
-    print "MAIN LOOP COUNT " + str(i)
+    msg =  "MAIN LOOP Iteration COUNT " + str(i)
+    print msg
+    myLog.Log(msg)
 
     activeCampaignList = campaign.getActiveCampaigns()
     
@@ -60,7 +60,10 @@ for i in range(0, 320):
     for campaignIndex in range (0,  len(activeCampaignList)):
         
         print "Start Campaign " + activeCampaignList[campaignIndex]
-     
+                
+        campaignWordsPerDay = getCampaignWordsPerDay(activeCampaignList[campaignIndex])
+        print "Campaign Words Per Day " + campaignWordsPerDay        
+           
         activeStudentList = Students.getActiveStudents(activeCampaignList[campaignIndex])
      
         wordIndex = 0
@@ -69,18 +72,21 @@ for i in range(0, 320):
             
             student = Students.studentGetRecord(activeStudentList[studentIndex])
             
-            if (Students.studentReadyForNextMessage(student)):                        # Word Groups 
+            if (Students.studentReadyForNextMessage(student, campaignWordsPerDay)): 
 
-#               Time to send next message to student.  It could be the                 
+#               Time to send next message to student.                 
                                               
                 print "Send Message Now"
                 
                 nextWord = studentGetNextWord(student)
                 
-                print "Send Next Word <" + nextWord + ">"
+                msg =  "Send Next Word Group Now <" + nextWord + ">"
+                print msg
+                myLog.Log(msg)
                 
                 activeWordList = []
                 activeWordList = getActiveWordList(activeCampaignList[campaignIndex])
+
                 
                 for activeWordIndex in range (0, len(activeWordList)):
                     print "ACTIVE WORD LIST ElEMENTS " + activeWordList[activeWordIndex]
