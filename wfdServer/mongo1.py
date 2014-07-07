@@ -10,9 +10,9 @@ from pymongo import database
 import myLog
 import campaign
 import Students
+import WordGroups
 
 from atext import *
-from WordGroups import *
 from DB import *
 
 pauseBetweenWords = 5           # 5 minutes
@@ -59,9 +59,9 @@ for i in range(0, 320):
     print "Active Campaign Count " + str(len(activeCampaignList))
     for campaignIndex in range (0,  len(activeCampaignList)):
         
-        print "Start Campaign " + activeCampaignList[campaignIndex]
+        print "Start Campaign " + campaign.getCampaignName(activeCampaignList[campaignIndex])
                 
-        campaignWordsPerDay = getCampaignWordsPerDay(activeCampaignList[campaignIndex])
+        campaignWordsPerDay = campaign.getCampaignWordsPerDay(activeCampaignList[campaignIndex])
         print "Campaign Words Per Day " + campaignWordsPerDay        
            
         activeStudentList = Students.getActiveStudents(activeCampaignList[campaignIndex])
@@ -78,14 +78,14 @@ for i in range(0, 320):
                                               
                 print "Send Message Now"
                 
-                nextWord = studentGetNextWord(student)
+                nextWord = Students.studentGetNextWord(student)
                 
                 msg =  "Send Next Word Group Now <" + nextWord + ">"
                 print msg
                 myLog.Log(msg)
                 
                 activeWordList = []
-                activeWordList = getActiveWordList(activeCampaignList[campaignIndex])
+                activeWordList = campaign.getActiveWordList(activeCampaignList[campaignIndex])
 
                 
                 for activeWordIndex in range (0, len(activeWordList)):
@@ -94,7 +94,7 @@ for i in range(0, 320):
                 
                 for activeWordIndex in range (0, len(activeWordList)):
                     
-                    activeWord = getWordBySeqNum(activeWordList[activeWordIndex])
+                    activeWord = WordGroups.getWordBySeqNum(activeWordList[activeWordIndex])
                     print "activeWord -> " + activeWord
                     
                     if ((nextWord == "") or (activeWordList[activeWordIndex]  == nextWord)):
@@ -122,7 +122,7 @@ for i in range(0, 320):
                             print logLine
                             Students.studentAddLogLine(activeStudentList[studentIndex], logLine)        
                         ## Get WordGroup from DB to send
-                        thisWordGroup = getActiveWord(activeWordList[activeWordIndex])
+                        thisWordGroup = WordGroups.getActiveWord(activeWordList[activeWordIndex])
             
                         print "Length " + str(len(thisWordGroup))
             
@@ -146,8 +146,8 @@ for i in range(0, 320):
                             
                    activeWordIndex = 0
                    activeWordList = []
-                   activeWordList = getActiveWordList(activeCampaignList[campaignIndex])                   
-                   thisQuestion = getActiveWordQuestion(activeWordList[activeWordIndex])
+                   activeWordList = WordGroups.getActiveWordList(activeCampaignList[campaignIndex])                   
+                   thisQuestion = WordGroups.getActiveWordQuestion(activeWordList[activeWordIndex])
                    
                    logLine = "Next Word <" + activeWordList[activeWordIndex] + ">"
                    print logLine
@@ -160,7 +160,7 @@ for i in range(0, 320):
                    
                    
                    #Ans 1 
-                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 1).strip()
+                   thisAnswer = WordGroups.getActiveWordAnswer(activeWordList[activeWordIndex], 1).strip()
                    if len(thisAnswer) > 0:                   
                        logLine = "ANS 1 -> " + thisAnswer                
                        print logLine
@@ -168,7 +168,7 @@ for i in range(0, 320):
                        Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                        
                    #Ans 2 
-                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 2).strip()
+                   thisAnswer = WordGroups.getActiveWordAnswer(activeWordList[activeWordIndex], 2).strip()
                    if len(thisAnswer) > 0:                   
                        logLine = "ANS 2 -> " + thisAnswer                
                        print logLine
@@ -176,7 +176,7 @@ for i in range(0, 320):
                        Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                        
                    #Ans 3 
-                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 3).strip()
+                   thisAnswer = WordGroups.getActiveWordAnswer(activeWordList[activeWordIndex], 3).strip()
                    if len(thisAnswer) > 0:                   
                        logLine = "ANS 3 -> " + thisAnswer                
                        print logLine
@@ -184,7 +184,7 @@ for i in range(0, 320):
                        Students.studentAddLogLine(activeStudentList[studentIndex], logLine)                       
                       
                    #Ans 4 
-                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 4).strip()
+                   thisAnswer = WordGroups.getActiveWordAnswer(activeWordList[activeWordIndex], 4).strip()
                    if len(thisAnswer) > 0:                   
                        logLine = "ANS 4 -> " + thisAnswer                
                        print logLine
@@ -192,7 +192,7 @@ for i in range(0, 320):
                        Students.studentAddLogLine(activeStudentList[studentIndex], logLine)                          
                       
                    #Ans 5 
-                   thisAnswer = getActiveWordAnswer(activeWordList[activeWordIndex], 5).strip()
+                   thisAnswer = WordGroups.getActiveWordAnswer(activeWordList[activeWordIndex], 5).strip()
                    if len(thisAnswer) > 0:                   
                        logLine = "ANS 5 -> " + thisAnswer                
                        print logLine

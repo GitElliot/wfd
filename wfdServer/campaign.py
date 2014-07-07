@@ -3,9 +3,9 @@
 import datetime
 import time
 import pymongo
+import DB
 from pymongo import Connection
 from pymongo import database
-from DB import *
 from atext import *
 
 
@@ -74,11 +74,11 @@ def getActiveCampaigns():
     dayNumber = today.weekday()
     print "Today is day number " + str(dayNumber)
     
-    connection = Connection(getDBHost(), getDBPort())
-    print "Connecting to Campaign"
+    connection = Connection(DB.getDBHost(), DB.getDBPort())
+#    print "Connecting to Campaign"
     
     db = connection.meteor
-    print "Connected to Campaign"
+#    print "Connected to Campaign"
     
     collection = db.campaigns
     
@@ -95,13 +95,13 @@ def getActiveCampaigns():
                 print "Campaign Excluded Today - " + camp['campaign'] 
                 continue
             
-            print "Campaign Not Excluded Today - " + camp['campaign']        
+#            print "Campaign Not Excluded Today - " + camp['campaign']        
                       
             if activeToday(camp, dayNumber):            
                 print "Campaign Active Today - " + camp['campaign']
                 activeCampaignList.append(camp['_id'])
-            else:
-                print "Campaign Not Active Today - " + camp['campaign']
+#            else:
+#                print "Campaign Not Active Today - " + camp['campaign']
                        
         except Exception, e:
                 print "getActiveCampaigns EXCEPTION -- %s" % e
@@ -121,14 +121,14 @@ def getActiveCampaigns():
 def getActiveWordList(campaignID):
     print "ACTIVE Word List Order"
       
-    connection = Connection(getDBHost(), getDBPort())
-    print "Connecting to Campaigns"
+    connection = Connection(DB.getDBHost(), DB.getDBPort())
+#    print "Connecting to Campaigns"
     
     db = connection.meteor
 #    print "Connected to Words"    
     
     activeWordList = []
-    print "Active Word List Order"
+#    print "Active Word List Order"
     
     campaign = db.campaigns.find_one({"_id":campaignID})
     
@@ -152,13 +152,41 @@ def getActiveWordList(campaignID):
     return activeWordList    
 #  
 ##    print "End of Words"
+
+
+
+
+def getCampaignName(campaignID):
+ #   print "Get Campaign Name"
+      
+    connection = Connection(DB.getDBHost(), DB.getDBPort())
     
+    try:
+        
+        db = connection.meteor
+         
+        campaign = db.campaigns.find_one({"_id":campaignID})
+        
+        connection.close()
+        
+        if (campaign == ""):
+            return "N/A"
+        
+        name  = campaign['campaign']
+        
+        if (name  == ""):
+            return "N/A"
+    
+        return name
+    
+    except:
+        print "**** getCampaignName Exception ****"
+        return "N/A"    
 
 def getCampaignWordsPerDay(campaignID):
-    print "Get Campaign Words Per Day"
+ #   print "Get Campaign Words Per Day"
       
-    connection = Connection(getDBHost(), getDBPort())
-    print "Connecting to Campaigns"
+    connection = Connection(DB.getDBHost(), DB.getDBPort())
     
     try:
         
@@ -179,6 +207,7 @@ def getCampaignWordsPerDay(campaignID):
         return wordsPerDay
     
     except:
+        print "**** getCampaignWordsPerDay Exception ****"
         return "1"
 
 
