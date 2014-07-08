@@ -1275,6 +1275,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
   //
   //Clear Campaign Form
    var clearCampaignForm = function() {
+    alert("Clear Campaign Form");
       myClearText('ccampaign');
       myClearText('ckeyword');
       myClearText('cstate');
@@ -1291,7 +1292,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       myClearButton('sunactive');
       myClearText('sendtime');
       myClearButton('studentactive');
-      myClearText('sendcount');
+      $('.sendcount').val(1);
       myClearText('sendaftercount');
       myClearText('xdate');
       myClearText('xdatelist');      
@@ -1462,7 +1463,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       mySetButton('sunactive', campaign.sunactive);
       mySetText('sendtime', campaign.sendtime);
       mySetButton('studentactive', campaign.studentactive);
-      mySetText('sendcount', campaign.sendcount);
+      $('.sendcount').val(campaign.sendcount);
       mySetText('sendaftercount', campaign.sendaftercount);
       mySetText('xdate', campaign.xdate);
       mySetText('xdatelist', campaign.xdatelist);          
@@ -1503,7 +1504,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       mySetButton('sunactive', campaign.sunactive);
       mySetText('sendtime', campaign.sendtime);
       mySetButton('studentactive', campaign.studentactive);
-      mySetText('sendcount', campaign.sendcount);
+      $('.sendcount').val(campaign.sendcount);
       mySetText('sendaftercount', campaign.sendaftercount);
       mySetText('xdate', campaign.xdate);
       mySetText('xdatelist', campaign.xdatelist);
@@ -1610,7 +1611,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       
       var sendtime = myGetText('sendtime');
       var activestudent = myGetText('studentactive');
-      var sendcount = myGetText('sendcount');
+      var sendcount = tmpl.find('.sendcount').value;
       var sendaftercount = myGetText('sendaftercount');
       var xdate = myGetText('xdate');
       var xdatelist = myGetText('xdatelist');
@@ -1735,6 +1736,9 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
     
     'click .xdate':function(evt, tmpl){
        $('#xdate').datepicker();    
+    },
+    'click .timepicker1':function(evt, tmpl){
+      $('#sendtime').timepicker();
     }
   })
           

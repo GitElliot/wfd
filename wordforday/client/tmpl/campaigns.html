@@ -160,12 +160,29 @@
 	     <input type="checkbox" class="wactive" name="wactive" id="satactive" checked="yes"> &nbsp; Saturday&nbsp;&nbsp;
 	     <input type="checkbox" class="wactive" name="wactive" id="sunactive" checked="yes"> &nbsp; Sunday&nbsp;&nbsp;		
 	    <br><br>	
-	    &nbsp;Send Time &nbsp;(HHMM) &nbsp;<input type="text" class="sendtime tbh" name="sendtime" value="{{campaign.sendtime}}" id="sendtime">
+	    &nbsp;Start Time &nbsp;
 	    &nbsp;&nbsp;
+	    <div class="input-append bootstrap-timepicker">
+	       <input id="sendtime" type="text" class="input-small timepicker1 sendtime" readonly   name="sendtime" value="{{campaign.sendtime}}" >
+	       <span class="add-on"><i class="icon-time"></i></span>
+	    </div>
+	    &nbsp;&nbsp;	    	    
 	     <input type="checkbox" class="wactive" name="wactive" id="studentactive" checked="yes"> &nbsp; Is Student
 	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	     
-	     Send &nbsp;<input type="text" class="sendcount tbh" name="sendcount" value="{{campaign.sendcount}}" id="sendcount"> 
-	     &nbsp;words each day    
+	     Send &nbsp;&nbsp;
+	
+	          <select class="sendcount" id="sendcount">
+                  <option value="1">1 word each day</option>
+                  <option value="2">2 words each day</option>
+                  <option value="3">3 words each day</option>
+                  <option value="4">4 words each day</option>
+                  <option value="5">5 words each day</option>
+                  <option value="6">6 words each day</option>
+                  <option value="7">7 words each day</option>
+                  <option value="8">8 words each day</option>
+                  <option value="9">9 words each day</option>
+                  <option value="10">10 words each day</option>		  
+                </select>	     
 	</div>
         &nbsp;&nbsp;&nbsp;<b>Send test for previous words:</b> &nbsp;	
 	<div class="sendBlock">
@@ -173,6 +190,7 @@
 	     after sending &nbsp;<input type="text" class="sendcount tbh" name="sendaftercount" value="{{campaign.sendaftercount}}" id="sendaftercount">
 	     &nbsp;words.
 	</div>
+
        &nbsp;&nbsp;&nbsp;<b>Do not send words on these dates:</b> &nbsp;
 	<div class="sendBlock">
 	    &nbsp;&nbsp;
