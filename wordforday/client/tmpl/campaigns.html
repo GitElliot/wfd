@@ -169,8 +169,7 @@
 	    &nbsp;&nbsp;	    	    
 	     <input type="checkbox" class="wactive" name="wactive" id="studentactive" checked="yes"> &nbsp; Is Student
 	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	     
-	     Send &nbsp;&nbsp;
-	
+	     Send &nbsp;&nbsp;	
 	          <select class="sendcount" id="sendcount">
                   <option value="1">1 word each day</option>
                   <option value="2">2 words each day</option>
@@ -187,8 +186,22 @@
         &nbsp;&nbsp;&nbsp;<b>Send test for previous words:</b> &nbsp;	
 	<div class="sendBlock">
 	    &nbsp;&nbsp;
-	     after sending &nbsp;<input type="text" class="sendcount tbh" name="sendaftercount" value="{{campaign.sendaftercount}}" id="sendaftercount">
-	     &nbsp;words.
+	     after sending &nbsp;
+	     &nbsp;
+	          <select class="sendaftercount" id="sendaftercount">
+                  <option value="0">all words</option>		    
+                  <option value="1">1 word</option>
+                  <option value="2">2 words</option>
+                  <option value="3">3 words</option>
+                  <option value="4">4 words</option>
+                  <option value="5">5 words</option>
+                  <option value="6">6 words</option>
+                  <option value="7">7 words</option>
+                  <option value="8">8 words</option>
+                  <option value="9">9 words</option>
+                  <option value="10">10 words</option>		  
+                </select>	     
+	     
 	</div>
 
        &nbsp;&nbsp;&nbsp;<b>Do not send words on these dates:</b> &nbsp;

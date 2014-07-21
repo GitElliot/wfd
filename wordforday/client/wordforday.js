@@ -200,7 +200,7 @@ if (Meteor.isClient) {
       mySetText('scampaign', campaign);
       // Campaign has changed -- reset it
       var d = new Date();
-      d = d.toUTCString();
+      d = d.toLocaleString();
       var status = "Campaign '" + campaign + "' Initiated  " + d + "\r\n"
       mySetText("studentStatus", status);
     },
@@ -1275,7 +1275,6 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
   //
   //Clear Campaign Form
    var clearCampaignForm = function() {
-    alert("Clear Campaign Form");
       myClearText('ccampaign');
       myClearText('ckeyword');
       myClearText('cstate');
@@ -1293,7 +1292,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       myClearText('sendtime');
       myClearButton('studentactive');
       $('.sendcount').val(1);
-      myClearText('sendaftercount');
+      $('.sendaftercount').val(0);
       myClearText('xdate');
       myClearText('xdatelist');      
   
@@ -1405,7 +1404,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       }
           
           if ((wgroup.cstate == null) || (wgroup.cstate == "")) {  // added later, may be null
-           wgroup.cstate = "off";
+           wgroup.cstate = "Stopped";
           }
            
           myConsoleLog("word = "  +  wgroup.word  +  " this campaign " + thisCampaign + " State " + wgroup.cstate);
@@ -1443,7 +1442,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       mySetText('ckeyword', campaign.keyword);
       
       if ((campaign.cstate == null) || (campaign.cstate == "")) {    // added later, may be null
-        campaign.cstate = "off"
+        campaign.cstate = "Stopped"
       }
       mySetText('cstate', campaign.cstate);
       
@@ -1464,7 +1463,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       mySetText('sendtime', campaign.sendtime);
       mySetButton('studentactive', campaign.studentactive);
       $('.sendcount').val(campaign.sendcount);
-      mySetText('sendaftercount', campaign.sendaftercount);
+      $('.sendaftercount').val(campaign.sendaftercount);      
       mySetText('xdate', campaign.xdate);
       mySetText('xdatelist', campaign.xdatelist);          
   }
@@ -1482,7 +1481,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       mySetText('ckeyword', campaign.keyword);
       
       if ((campaign.cstate == null) || (campaign.cstate == ""))  {  // added later, may be null
-        campaign.cstate = "off"
+        campaign.cstate = "Stopped"
       }
       mySetText('cstate', campaign.cstate);
       
@@ -1505,7 +1504,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       mySetText('sendtime', campaign.sendtime);
       mySetButton('studentactive', campaign.studentactive);
       $('.sendcount').val(campaign.sendcount);
-      mySetText('sendaftercount', campaign.sendaftercount);
+      $('.sendaftercount').val(campaign.sendaftercount);      
       mySetText('xdate', campaign.xdate);
       mySetText('xdatelist', campaign.xdatelist);
       
@@ -1516,10 +1515,12 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
   
     
   Template.campaigns.nextCampaign = function() {
+    myConsoleLog("campaign_Cursor " + Session.get('campaignCursor'));
     return (Number(Session.get('campaignCursor')) + 10) + " - " + (Number(Session.get('campaignCursor')) + 20);
   }
   
   Template.campaigns.prevCampaign = function() {
+    myConsoleLog("campaign_Cursor " + Session.get('campaignCursor'));    
     if (Number(Session.get('campaignCursor')) < 10) {
       return '';
     }
@@ -1532,7 +1533,8 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
   }
   
   Template.campaigns.campaignList = function() {
-      return Campaigns.find({} , {limit:10});
+//      return Campaigns.find({} , {limit:10});
+      return Campaigns.find({} , {limit:10, skip:Session.get('campaignCursor')});    
   }
   
   Template.campaigns.campaignListFull = function() {
@@ -1568,7 +1570,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
         Session.set('campaignCursor', Number(Session.get('campaignCursor')) +10);
     },
     'click .campaignStatusStart ':function(evt, tmpl){
-        mySetText('cstate', 'Run');
+        mySetText('cstate', 'Running');
     },    
      'click .campaignStatusStop ':function(evt, tmpl){
         mySetText('cstate', 'Stopped');
@@ -1612,7 +1614,7 @@ var setCampaignWordList = function (campaignID, campaignWordOrder) {
       var sendtime = myGetText('sendtime');
       var activestudent = myGetText('studentactive');
       var sendcount = tmpl.find('.sendcount').value;
-      var sendaftercount = myGetText('sendaftercount');
+      var sendaftercount = tmpl.find('.sendaftercount').value;      
       var xdate = myGetText('xdate');
       var xdatelist = myGetText('xdatelist');
                             

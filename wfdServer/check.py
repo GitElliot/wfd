@@ -80,33 +80,71 @@ def GetNextTagValue(tag, strng):
     
     s3 = s2[:i2]                                ####  WWWWWWWWWWWWW
       
-    return s3    
+    return s3
+
+def secondsPastMidnight(hhmmString):
     
-print "Today is"
+    print "Input String " + hhmmString
+    
+    ampmFlag = "AM"
+    if (hhmmString.find("PM") > 0):
+        ampmFlag = "PM"
+    
+    hhmm1 = hhmmString.replace(ampmFlag, "").strip()
+    
+    hhmmArray = hhmm1.split(':')
+    
+    hh = hhmmArray[0]
+    mm = hhmmArray[1]
+    
+    print "hh " + hh + "  mm " + mm
+    
+    
 
-mmddyyyy = datetime.datetime.now().strftime("%m/%d/%Y")
+    
+#  print "Today is"
 
-print mmddyyyy
+#  mmddyyyy = datetime.datetime.now().strftime("%m/%d/%Y")
 
-w1 = "xxxxxxxxxxxxxxxxxxxxxRemainingWFD<0,4>bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+#  print mmddyy
 
-w2 = GetNextTagValue("RemainingWFD<", w1)
+#   Return True if time is right to send message
+def sendTimeCheck(hhmm):
+    
+    hhmmNow = time.strftime('%I:%M %p')
+    
+    if (hhmmNow.find("PM") > 0):
+        hhmmNowFlag = "PM"
+    else:
+        hhmmNowFlag = "AM"
+        
+    if (hhmm.find("PM") > 0):
+        hhmmFlag = "PM"
+    else:
+        hhmmFlag = "AM"
+        
+    if (hhmmFlag == hhmmNowFlag):
+        hhmmNow = hhmmNow.replace("12:", "00:")    # Change 12:00 hours to 00:00 hours
+        hhmm = hhmm.replace("12:", "00:")          # Change 12:00 hours to 00:00 hours
+        if (hhmmNow  < hhmm):
+            return False
+        else:
+            return True
+        
+    if (hhmmFlag == "PM"):
+        return False
+    
+    return True
+                
 
-print w2
+timeCheck = "09:49 PM"
 
-w3 = w2.split(",")
-
-print w3
-
-w4 = w3[0]
-
-w5 = w3[1]
-
-print "w4  ="  + w4 + "    w5 = " + w5
-
-w6 = int(w5)  - 1
-
-print "w6" + str(w6)
+if (sendTimeCheck(timeCheck) == True):
+    print " Time is " + timeCheck + " Time To Send"
+else:
+    print "Time is "  + timeCheck + " Do Not Send"
+    
+    
 
 
 

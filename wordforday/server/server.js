@@ -20,12 +20,15 @@
       })
            
       Meteor.publish("words", function(wordCursor){
-//       return Words.find({}, {sort:{'seqnum' :1}, skip:wordCursor});           
+//       return Words.find({}, {sort:{'seqnum' :1}, skip:wordCursor});  // Never really worked right          
          return Words.find({}, {sort:{'seqnum' :1}});      
       })
       
-      Meteor.publish("campaigns", function(campaignCursor){             
-        return Campaigns.find({}, {sort:{'campaign' :1},  skip:campaignCursor}); 
+      Meteor.publish("campaigns", function(campaignCursor){
+//        return Campaigns.find({}, {sort:{'campaign' :1},  skip:campaignCursor});   // Never really worked right        
+        return Campaigns.find({}, {sort:{'campaign' :1}});
+      
+      
       })
       
       

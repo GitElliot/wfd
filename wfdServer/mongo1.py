@@ -15,7 +15,7 @@ import WordGroups
 from atext import *
 from DB import *
 
-pauseBetweenWords = 5           # 5 minutes
+pauseBetweenWords = 60          # 60 minutes
 pauseBetweenQuestions = 10      # 10 minutes 
 
 
@@ -47,7 +47,11 @@ myLog.Log("WFD Server Start")
 activeCampaignList = []
 
 # Main Loop  (limited)
-for i in range(0, 320):
+#for i in range(0, 10000):
+i = 0
+while True:
+    i = i + 1
+    
     time.sleep(10)
 
     msg =  "MAIN LOOP Iteration COUNT " + str(i)

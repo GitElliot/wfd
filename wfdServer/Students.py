@@ -102,37 +102,37 @@ def studentReadyForNextMessage(student, campaignWordsPerDay):
     
     print "STUDENT STRUCTURE CHECK     cell " + student['cell']
     print "Campaign Words Per Day " + campaignWordsPerDay
-#    
-#    if (s1.find("<Words Done>") > 0):
-#        return False
-#           
-#    i1  = s1.rfind(nmt)                           ####  .....Next Message Time <NNNNNNNNNN.NN>
-#    
-#    if (i1 < 0):
-#        return True                              #### String not found, must be okay to send message
-#    
-#    i1 += len(nmt)   #Get to start of tick count
-#    
-#    s2 = s1[i1:]                                 #### NNNNNNNNNN.NN>
-#    
-#    i2 = s2.find(">")
-#    if (i2 < 0):
-#        myLog.Log("Data Error - studentReadyForNextMessage '>' tag missing")
-#        myLog.log(s1)
-#        return True                             #### Something not right,  send message anyway
-#    
-#    s3 = s2[:i2]                                #### NNNNNNNNNN.NN
-#    
-#    now = time.time()
-#    
-#    delta = float(s3) - now
-#
-##    print "Time Now " + str(now)
-##    print "Time Difference " + str(delta)
-#
-#
-#    if (delta > 0):
-#        return False     #### Not enough time has passed
+    
+    if (s1.find("<Words Done>") > 0):
+        return False
+           
+    i1  = s1.rfind(nmt)                           ####  .....Next Message Time <NNNNNNNNNN.NN>
+    
+    if (i1 < 0):
+        return True                              #### String not found, must be okay to send message
+    
+    i1 += len(nmt)   #Get to start of tick count
+    
+    s2 = s1[i1:]                                 #### NNNNNNNNNN.NN>
+    
+    i2 = s2.find(">")
+    if (i2 < 0):
+        myLog.Log("Data Error - studentReadyForNextMessage '>' tag missing")
+        myLog.log(s1)
+        return True                             #### Something not right,  send message anyway
+    
+    s3 = s2[:i2]                                #### NNNNNNNNNN.NN
+    
+    now = time.time()
+    
+    delta = float(s3) - now
+
+#    print "Time Now " + str(now)
+#    print "Time Difference " + str(delta)
+
+
+    if (delta > 0):
+        return False     #### Not enough time has passed
 
     try:                 # Catch possible exceptions for dealing with multiple words per day
         remainingWordTag = studentGetNextTagValue(rwfd, student)    # Remaining Word For Day Count

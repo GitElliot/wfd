@@ -6,33 +6,33 @@ from pymongo import Connection
 from pymongo import database
 from DB import *
 
-#def getActiveWordList(campaignID):
-##    print "ACTIVE Words"
-#      
-#    connection = Connection(getDBHost(), getDBPort())
-#    print "Connecting to Words"
-#    
-#    db = connection.meteor
-##    print "Connected to Words"    
-#    
-#    activeWordList = []
-##    print "Active Word List"
-#    
-#    for word in db.words.find().sort("seqnum", pymongo.ASCENDING):
-#        
-#        try:
-#            campaigns = word['campaign']
-#            if campaigns.index(campaignID) >= 0 :
-#                print "Word FOUND " + word['word']
-#                print campaigns
-#                activeWordList.append(word['word'])                
-#        except:
-#            campaigns = ""
-#                               
-#    connection.close();            
-#    return activeWordList    
-#  
-##    print "End of Words"
+def getActiveWordList(campaignID):
+#    print "ACTIVE Words"
+      
+    connection = Connection(getDBHost(), getDBPort())
+    print "Connecting to Words"
+    
+    db = connection.meteor
+#    print "Connected to Words"    
+    
+    activeWordList = []
+#    print "Active Word List"
+    
+    for word in db.words.find().sort("seqnum", pymongo.ASCENDING):
+        
+        try:
+            campaigns = word['campaign']
+            if campaigns.index(campaignID) >= 0 :
+                print "Word FOUND " + word['word']
+                print campaigns
+                activeWordList.append(word['word'])                
+        except:
+            campaigns = ""
+                               
+    connection.close();            
+    return activeWordList    
+  
+#    print "End of Words"
 
 def getActiveWord(thisWord):
 

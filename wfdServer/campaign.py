@@ -24,22 +24,44 @@ def excludeToday(campName, xlist):
    
    return False
     
+
+#   Return True if time is right to send message
+def sendTimeCheck(hhmm):
     
+    hhmmNow = time.strftime('%I:%M %p')
+    
+    if (hhmmNow.find("PM") > 0):
+        hhmmNowFlag = "PM"
+    else:
+        hhmmNowFlag = "AM"
+        
+    if (hhmm.find("PM") > 0):
+        hhmmFlag = "PM"
+    else:
+        hhmmFlag = "AM"
+        
+    if (hhmmFlag == hhmmNowFlag):
+        hhmmNow = hhmmNow.replace("12:", "00:")    # Change 12:00 hours to 00:00 hours
+        hhmm = hhmm.replace("12:", "00:")          # Change 12:00 hours to 00:00 hours
+        if (hhmmNow  < hhmm):
+            return False
+        else:
+            return True
+        
+    if (hhmmFlag == "PM"):
+        return False
+    
+    return True    
 
 def activeToday(camp, dayNumber):
 #    print "activeToday()"
     try:
-        
-        
-        hhmmNow = time.strftime('%H%M')
+               
         campaignTime  = camp['sendtime']        # Time has to be in correct format
         campaignTime = campaignTime.strip()
-        if len(campaignTime) != 4:
+        if (sendTimeCheck(campaignTime) == False):
             return False
-        
-        if campaignTime >= hhmmNow:
-            return False
-        
+               
         if dayNumber == 0:
             return camp['monactive']
         
