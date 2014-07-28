@@ -67,12 +67,12 @@
 }
 
 .sel-campaign {
-    width:120px;
+    width:60px;
 }
 
 
 .sel-groups {
-    width:120px;
+    width:50px;
 }
 
 .studentStatus {
@@ -81,3 +81,15 @@
     width:600px;
     height:250px;       
 }
+
+.timeStamp {
+    width:180px;
+}
+
+.nameBlock {
+    float:left;
+    border-style:  solid;
+    border-width:1px;    
+    border-radius: 5px;
+    padding: 3px 3px 3px 3px;
+}    

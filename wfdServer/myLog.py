@@ -19,7 +19,7 @@ def Log(line):
         os.mkdir(LogRoot)
         print "EXCEPT log"
     try:
-        f = open(logFileName, "wa")
+        f = open(logFileName, "a")
         now = time.strftime('%Y%m%d %H:%M ')
         f.write(now + line + "\n")
         f.close()

@@ -174,11 +174,15 @@
             </div>
             </div>  <!--End Container1-->
 
-<br>  <br>              
+<br>
+Last Sent <input readonly type="text" class="lmsent timeStamp" name="lmsent" value="{{student.lmsentTime}}" id="lmsent">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Last Response    <input readonly type="text" class="lmrecv timeStamp" name="lmrecv" value="{{student.lmrecvTime}}" id="lmrecv">
+     <br>              
           <div class="container2">
-            <div class="left2">
+            <div>
               
-           <div border="1px">
+           <div class="nameBlock">
             <table>
               <tr>
                 <td>
@@ -222,26 +226,28 @@
            </div>
           </div>
             
-            <div class="right2">
- <br>             
-              Groups&nbsp;&nbsp;
-              <select class="sel-groups" id="sel-groups">
-                <option value="Group 1">1</option>
-                <option value="Group 2">2</option>
-                <option value="Group 3">3</option>
-              </select>
-              
-              <br>
-              <br>
-              Select Campaign for Student
+            <div class="right2">           
+
+              Campaign
 	      <br>
+	      <input readonly type="text" class="scampaign" name="scampaign" value="{{student.scampaign}}" id="scampaign">	       
+	      <br> 
+	       
                <select class="selCampaign" name="campaigns" id="selCampaign">
 		    {{#each campaignListFull}}
 			{{>campaignRow2}}
 		    {{/each}}
                </select>
 	       <br>
-	      <input readonly type="text" class="scampaign" name="scampaign" value="{{student.scampaign}}" id="scampaign">
+		    
+              Groups&nbsp;&nbsp;
+              <select class="sel-groups" id="sel-groups">
+                <option value="Group 1">1</option>
+                <option value="Group 2">2</option>
+                <option value="Group 3">3</option>
+              </select>		    
+		    
+
 	       <br>
             </div>
             </div>   <!--End of Container -->

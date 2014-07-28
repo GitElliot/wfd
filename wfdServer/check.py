@@ -137,14 +137,20 @@ def sendTimeCheck(hhmm):
     return True
                 
 
-timeCheck = "09:49 PM"
+#timeCheck = "09:49 PM"
+#
+#if (sendTimeCheck(timeCheck) == True):
+#    print " Time is " + timeCheck + " Time To Send"
+#else:
+#    print "Time is "  + timeCheck + " Do Not Send"
+    
+    
+timeNow = time.strftime("%Y-%m-%d %H:%M:%S")
+print timeNow
 
-if (sendTimeCheck(timeCheck) == True):
-    print " Time is " + timeCheck + " Time To Send"
-else:
-    print "Time is "  + timeCheck + " Do Not Send"
-    
-    
+studentUpdateLastMessageSent("732-979-8073")
+
+studentUpdateLastMessageReceived("732-979-8073")
 
 
 

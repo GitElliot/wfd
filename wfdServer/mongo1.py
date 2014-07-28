@@ -56,14 +56,18 @@ while True:
 
     msg =  "MAIN LOOP Iteration COUNT " + str(i)
     print msg
-    myLog.Log(msg)
+#    myLog.Log(msg)
 
     activeCampaignList = campaign.getActiveCampaigns()
     
-    print "Active Campaign Count " + str(len(activeCampaignList))
+    msg = "Active Campaign Count " + str(len(activeCampaignList))
+    print msg
+#    myLog.Log(msg)
     for campaignIndex in range (0,  len(activeCampaignList)):
         
-        print "Start Campaign " + campaign.getCampaignName(activeCampaignList[campaignIndex])
+        msg = "Start Campaign " + campaign.getCampaignName(activeCampaignList[campaignIndex])
+        print msg
+#        myLog.Log(msg)
                 
         campaignWordsPerDay = campaign.getCampaignWordsPerDay(activeCampaignList[campaignIndex])
         print "Campaign Words Per Day " + campaignWordsPerDay        
@@ -101,12 +105,16 @@ while True:
                     activeWord = WordGroups.getWordBySeqNum(activeWordList[activeWordIndex])
                     print "activeWord -> " + activeWord
                     
+                    mesg = "Cell " + activeStudentList[studentIndex] +  "   Word  " + activeWord
+                    myLog.Log(mesg)
+                    
                     if ((nextWord == "") or (activeWordList[activeWordIndex]  == nextWord)):
                                          
                         localtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         print localtime
                         logLine =  localtime + "Word Tag (" + activeWord + ")   <<" + activeWordList[activeWordIndex] + ">>  to student " + activeStudentList[studentIndex]
                         print logLine
+                        
                         Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                         
                         currentMessageTime = time.time()
@@ -161,6 +169,8 @@ while True:
                    print logLine
                    Students.studentAddLogLine(activeStudentList[studentIndex], logLine)
                    retVal = sendSMS(activeStudentList[studentIndex], thisQuestion)
+                   
+                   msg = "Send Question   Cell: " + activeStudentList[studentIndex] + "   Question: " + thisQuestion
                    
                    
                    #Ans 1 

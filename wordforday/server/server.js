@@ -6,6 +6,9 @@
       Words = new Meteor.Collection('words');
       Campaigns = new Meteor.Collection('campaigns');
       
+      WordLogs = new Meteor.Collection('wordlogs');
+      
+      
       Meteor.startup(function() {
         Meteor.methods({
 //            removeAllStudents:function() {
@@ -27,8 +30,10 @@
       Meteor.publish("campaigns", function(campaignCursor){
 //        return Campaigns.find({}, {sort:{'campaign' :1},  skip:campaignCursor});   // Never really worked right        
         return Campaigns.find({}, {sort:{'campaign' :1}});
+      })
       
-      
+      Meteor.publish("wordLogs", function(wordLogsCursor) {
+         return WordLogs.find({}, {sort:{'seqnum' :1}});      
       })
       
       

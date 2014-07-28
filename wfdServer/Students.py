@@ -37,6 +37,33 @@ def getActiveStudents(campaignID):
     
     except:
         print "GET ACTIVE STUDENT EXCEPTION"
+        
+        
+        
+def studentUpdateLastMessageSent(thisCellNumber):
+    
+    student = studentGetRecord(thisCellNumber)
+    if (student == ""):
+        return
+    
+    student['lmsent'] = time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    retVal = studentUpdateRecord(student)  
+    
+    return
+
+def studentUpdateLastMessageReceived(thisCellNumber):
+    
+    student = studentGetRecord(thisCellNumber)
+    if (student == ""):
+        return
+    
+    student['lmrecv'] = time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    retVal = studentUpdateRecord(student)  
+    
+    return
+
 
 
 def studentAddLogLine(thisCellNumber, logLine):
@@ -51,8 +78,11 @@ def studentAddLogLine(thisCellNumber, logLine):
         if (student):
             thisLine = student['studentStatus'] + "\r\n" + logLine
             student['studentStatus'] = thisLine
+
                         
-            db.students.update({'_id': student['_id']},  {'cell': student['cell'], 'name': student['name'],
+            db.students.update({'_id': student['_id']},  {'cell': student['cell'],
+                            'lmsent':student['lmsent'], 'lmrecv':student['lmrecv'],
+                            'name': student['name'],
                             'login':student['login'], 'pword':student['pword'], 'tzoffset': student['tzoffset'],
                             'allowaudio':student['allowaudio'], 'campaign':student['campaign'], 'studentStatus': thisLine}) 
            
@@ -65,6 +95,33 @@ def studentAddLogLine(thisCellNumber, logLine):
         
     connection.close()
     return
+
+def studentUpdateRecord(student):
+    
+    connection = Connection(DB.getDBHost(), DB.getDBPort())   
+    db = connection.meteor
+    print "StudentUpdateRecord" 	
+    
+    try: 
+                        
+        db.students.update({'cell': student['cell']},  {'cell': student['cell'],
+                        'lmsent':student['lmsent'], 'lmrecv':student['lmrecv'],
+                        'name': student['name'],
+                        'login':student['login'], 'pword':student['pword'], 'tzoffset': student['tzoffset'],
+                        'allowaudio':student['allowaudio'], 'campaign':student['campaign'],
+                        'studentStatus': student['studentStatus']}) 
+       
+        connection.close()
+        return
+        
+    
+    except Exception, e:
+        print "StudentUpdateRecord EXCEPTION -- %s" % str(e)
+        myLog.Log("studentUpdateRecord Exception for Cell " + student['cell'] )
+        
+    connection.close()
+    return     
+  
  
 
 def studentGetRecord(thisCellNumber):

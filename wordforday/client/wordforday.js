@@ -2,6 +2,8 @@ Students = new Meteor.Collection('students');
 Words = new Meteor.Collection('words');
 Campaigns = new Meteor.Collection('campaigns');
 
+WordLogs = new Meteor.Collection('wordlogs');
+
 
 
 if (Meteor.isClient) {
@@ -95,7 +97,11 @@ if (Meteor.isClient) {
     'dblclick .studentRow':function(evt, tmpl){
       Session.set('editing_student', tmpl.data._id);     
       mySetText('addStudent','Editing Student');
-      var student = Students.findOne({_id:tmpl.data._id});             
+      var student = Students.findOne({_id:tmpl.data._id});
+
+      mySetText("lmsent", student.lmsent);     
+      mySetText('lmrecv', student.lmrecv);
+      
       mySetText('cell', student.cell);
       mySetText('name', student.name);
       mySetText('login', student.login);
@@ -148,6 +154,10 @@ if (Meteor.isClient) {
     },
     'click .save':function(evt, tmpl) {
       var cell = myGetText('cell').trim();
+      
+      var lmsent = myGetText('lmsent').trim();
+      var lmrecv = myGetText('lmrecv').trim();
+      
       var name = myGetText('name').trim();
       var login = myGetText('login').trim();
       var pword = myGetText('pword').trim();  
@@ -159,7 +169,7 @@ if (Meteor.isClient) {
       var success = false;
       
      if (Session.get('editing_student')) {
-        success = updateStudent(cell, name, login, pword, tzoffset, allowaudio, campaign, studentStatus)
+        success = updateStudent(cell, lmsent, lmrecv, name, login, pword, tzoffset, allowaudio, campaign, studentStatus)
         if (success == false) {
           return;
         }
@@ -167,7 +177,7 @@ if (Meteor.isClient) {
         mySetText('addStudent', 'Add Student');
         clearForm();
       } else {
-        success = addStudent(cell, name, login, pword, tzoffset, allowaudio, campaign, studentStatus);
+        success = addStudent(cell, lmsent, lmrecv, name, login, pword, tzoffset, allowaudio, campaign, studentStatus);
         if (success == false) {
           return;
         myAlert("Student Added");
@@ -224,6 +234,10 @@ if (Meteor.isClient) {
       }
            
       mySetText('cell', student.cell);
+      
+      mySetText('lmsent', student.lmsent);
+      mySetText('lmrecv', student, lmrecv);
+      
       mySetText('name', student.name);
       mySetText('login', student.login);
       mySetText('pword', student.pword);
@@ -247,7 +261,7 @@ if (Meteor.isClient) {
     
   }
   
-  var addStudent = function(ncell, name, login, pword, tzoffset, allowaudio, campaign, studentStatus) {
+  var addStudent = function(ncell, lmsent, lmrecv, name, login, pword, tzoffset, allowaudio, campaign, studentStatus) {
     if (ncell.length == 0) {
       myRedAlert("Cell number is required");
       return false;
@@ -265,7 +279,7 @@ if (Meteor.isClient) {
       return false;
     }
     
-    Students.insert({cell:ncell, name:name, login:login, pword:pword, tzoffset:tzoffset,
+    Students.insert({cell:ncell, lmsent:lmsent, lmrecv:lmrecv, name:name, login:login, pword:pword, tzoffset:tzoffset,
                     allowaudio:allowaudio, campaign:campaign, studentStatus:studentStatus});
     
     myAlert("Student Inserted");
@@ -273,7 +287,7 @@ if (Meteor.isClient) {
       
   }
   
-  var updateStudent = function(cell, name, login, pword, tzoffset, allowaudio, campaign,studentStatus) {
+  var updateStudent = function(cell, lmsent, lmrecv, name, login, pword, tzoffset, allowaudio, campaign,studentStatus) {
     
     if (cell.length == 0) {
       myRedAlert("Cell number is required");
@@ -285,12 +299,14 @@ if (Meteor.isClient) {
       return false;
     }    
     
-    Students.update(Session.get('editing_student'), {$set: {cell:cell, name:name, login:login, pword:pword,
+    Students.update(Session.get('editing_student'), {$set: {cell:cell, lmsent:lmsent, lmrecv:lmrecv, name:name, login:login, pword:pword,
                     tzoffset:tzoffset, allowaudio:allowaudio, campaign:campaign, studentStatus:studentStatus}}); 
     return true;
   }
   var clearForm = function() {
     mySetText('cell', "");
+    mySetText("lmsent", "");     
+    mySetText('lmrecv', "");    
     mySetText('name', "");
     mySetText('login', "");
     mySetText('pword', "");
@@ -419,6 +435,40 @@ if (Meteor.isClient) {
     return true;
 }
 
+var myTimeStamp = function() {
+  var dNow = new Date();
+  var year = dNow.getFullYear();
+  var month = dNow.getMonth() + 1;
+  
+  if (month < 10) {
+    month = "0" + month;
+  }
+  
+  var day =  dNow.getDate();
+  if (day.length == 1) {
+    day = "0" + day;
+  }
+  
+ var hour = dNow.getHours();
+ if (hour < 10) {
+  hour = "0" + hour;
+ }
+ 
+ var minute = dNow.getMinutes();
+ if (minute < 10) {
+  minute = "0" + minute; 
+ }
+ 
+ var second = dNow.getSeconds();
+ if (second < 10) {
+  second = "0" + second;
+ }
+ 
+ 
+  retVal = year + "-" + month + "-" + day + " " + hour +":" + minute + ":" + second;
+  
+  return retVal;
+}
   
   //JAVASCRIPT FOR WORD GROUPS         JAVASCRIPT FOR WORD GROUPS         JAVASCRIPT FOR WORD GROUPS
   //JAVASCRIPT FOR WORD GROUPS         JAVASCRIPT FOR WORD GROUPS         JAVASCRIPT FOR WORD GROUPS  
@@ -558,6 +608,19 @@ var moveRow = function(currentSeq, direction){
                           remedifwrong:remedifwrong, enableaudio:enableaudio, url:url, campaign:campaign});
         
     myAlert("Word Group Inserted");
+    
+    
+    var ts = myTimeStamp();
+    
+    WordLogs.insert({timeofday:ts, action:'INSERT',
+                          seqnum:seqnum, word:word, active:active, points:points, instruction:instruction,
+                          flashtime:flashtime, use1:use1, use2:use2, use3:use3,
+                          question:question, ans1:ans1, active1:active1, ans2:ans2,
+                          active2:active2, ans3:ans3, active3:active3, ans4:ans4, active4:active4,
+                          ans5:ans5, active5:active5, remedifcorrect:remedifcorrect,
+                          remedifwrong:remedifwrong, enableaudio:enableaudio, url:url, campaign:campaign});     
+    
+
     return true;
       
   }
@@ -615,14 +678,43 @@ var moveRow = function(currentSeq, direction){
                           ans5:ans5, active5:active5, remedifcorrect:remedifcorrect,
                           remedifwrong:remedifwrong, enableaudio:enableaudio, url:url, campaign:campaign}});
     
+    var ts = myTimeStamp();
+    
+    WordLogs.insert({timeofday:ts, action:'UPDATE',
+                          seqnum:seqnum, word:word, active:active, points:points, instruction:instruction,
+                          flashtime:flashtime, use1:use1, use2:use2, use3:use3,
+                          question:question, ans1:ans1, active1:active1, ans2:ans2,
+                          active2:active2, ans3:ans3, active3:active3, ans4:ans4, active4:active4,
+                          ans5:ans5, active5:active5, remedifcorrect:remedifcorrect,
+                          remedifwrong:remedifwrong, enableaudio:enableaudio, url:url, campaign:campaign});    
+    
     return true;
   }
   
     
   var removeWord = function() {
+    
+    var id = Session.get('editing_word');
+    
+    var word = Words.findOne({_id:id});
+    var thisSeqNum = word.seqnum;
+    var thisWord = word.word;
+    
+    
     Words.remove({_id:Session.get('editing_word')});
     myAlert("Word Group Removed");
     document.getElementById('highlight').innerHTML  = "";
+    
+    var ts = myTimeStamp();
+    
+    WordLogs.insert({timeofday:ts, action:'DELETE',
+                          seqnum:thisSeqNum, word:thisWord, active:'', points:'', instruction:'',
+                          flashtime:'', use1:'', use2:'', use3:'',
+                          question:'', ans1:'', active1:'', ans2:'',
+                          active2:'', ans3:'', active3:'', ans4:'', active4:'',
+                          ans5:'', active5:'', remedifcorrect:'',
+                          remedifwrong:'', enableaudio:'', url:'', campaign:''});    
+    
   }
 
   
