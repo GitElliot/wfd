@@ -105,8 +105,7 @@ while True:
                     activeWord = WordGroups.getWordBySeqNum(activeWordList[activeWordIndex])
                     print "activeWord -> " + activeWord
                     
-                    mesg = "Cell " + activeStudentList[studentIndex] +  "   Word  " + activeWord
-                    myLog.Log(mesg)
+
                     
                     if ((nextWord == "") or (activeWordList[activeWordIndex]  == nextWord)):
                                          
@@ -138,8 +137,8 @@ while True:
             
                         print "Length " + str(len(thisWordGroup))
             
-                        if (len(thisWordGroup) > 0):
-                            retVal = sendSMS(activeStudentList[studentIndex], thisWordGroup[0])
+                        if (len(thisWordGroup) > 0):                       
+                            retVal = sendSMS(activeStudentList[studentIndex], thisWordGroup[0])                           
                             print retVal
                             retVal = sendSMS(activeStudentList[studentIndex], thisWordGroup[1])
                             print retVal
@@ -147,6 +146,11 @@ while True:
                             print retVal
                             retVal = sendSMS(activeStudentList[studentIndex], thisWordGroup[3])
                             print retVal
+                            
+                            Students.studentUpdateLastMessageSent(activeStudentList[studentIndex])
+                            mesg = "Cell " + activeStudentList[studentIndex] +  "   Word Sent  " + activeWord
+                            myLog.Log(mesg)                            
+                            
                         break
             
             elif (Students.studentReadyForNextQuestion(student)):
@@ -171,6 +175,7 @@ while True:
                    retVal = sendSMS(activeStudentList[studentIndex], thisQuestion)
                    
                    msg = "Send Question   Cell: " + activeStudentList[studentIndex] + "   Question: " + thisQuestion
+                   myLog.Log(msg)
                    
                    
                    #Ans 1 

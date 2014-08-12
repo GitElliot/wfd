@@ -4,9 +4,12 @@ import datetime
 import time
 import pymongo
 import DB
+import myLog
+
 from pymongo import Connection
 from pymongo import database
 from atext import *
+
 
 
 def excludeToday(campName, xlist):
@@ -84,7 +87,9 @@ def activeToday(camp, dayNumber):
             return camp['sunactive']
     
     except:
-            print 'except'
+            msg = "Exception - activeToday() "
+            print msg
+            myLog.Log(msg)
             return False
       
     return False
@@ -126,9 +131,11 @@ def getActiveCampaigns():
 #                print "Campaign Not Active Today - " + camp['campaign']
                        
         except Exception, e:
-                print "getActiveCampaigns EXCEPTION -- %s" % e
+                msg = "Exception:  getActiveCampaigns EXCEPTION -- %s" % e
+                print msg
                 print "Exception in calling activeToday()"
-                print "Campaign " + camp['campaign']               
+                print "Campaign " + camp['campaign']
+                myLog.Log(msg)
             
             
     connection.close();            
@@ -201,8 +208,10 @@ def getCampaignName(campaignID):
     
         return name
     
-    except:
-        print "**** getCampaignName Exception ****"
+    except Exception, e:      
+        msg = "Exception:  getCampaign Exception " + campaignID + "   -- %s "  % e
+        print msg
+        myLog.Log(msg)
         return "N/A"    
 
 def getCampaignWordsPerDay(campaignID):
@@ -228,8 +237,11 @@ def getCampaignWordsPerDay(campaignID):
     
         return wordsPerDay
     
-    except:
-        print "**** getCampaignWordsPerDay Exception ****"
+    except Exception, e:      
+        msg = "Exception:  getCampaignWordsPerDay " + campaignID + "   -- %s "  % e
+        print msg
+        myLog.Log(msg)
+        
         return "1"
 
 

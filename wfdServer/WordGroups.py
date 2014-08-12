@@ -2,6 +2,8 @@
 
 import datetime
 import pymongo
+import myLog
+
 from pymongo import Connection
 from pymongo import database
 from DB import *
@@ -51,8 +53,12 @@ def getActiveWord(thisWord):
         wordGroupList.append(word['use2'])
         wordGroupList.append(word['use3'])
         
-     except:
-        print "EXCEPT WORD"
+
+     except Exception, e:      
+        msg = "Exception:  WordGroups getActiveWord -  thisWord " + thisWord + "   -- %s "  % e
+        myLog.Log(msg)
+        print msg
+
         wordGroupList = []
         
      connection.close()
@@ -72,7 +78,9 @@ def getWordBySeqNum(seqNum):
         thisWord = word['word']
         
      except Exception, e:
-        print "GET WORD BY SEQ NUM EXCEPT -- %s" % e
+        msg = "Exception:  WordGroups getWordBySeqNum -  seqNum " + seqNum + "   -- %s "  % e
+        myLog.Log(msg)
+        print msg        
 
         thisWord = ""
         
@@ -93,8 +101,10 @@ def getActiveWordQuestion(thisWord):
         word = db.words.find_one({'word':thisWord})
         question = word['question']
         
-     except:
-        print "EXCEPTON - WORD QUESTION"
+     except Exception, e:
+        msg = "Exception:  WordGroups getActiveWordQuestion -  thisWord " + thisWord + "   -- %s "  % e
+        myLog.Log(msg)
+        print msg        
         question = ""
         
      connection.close()
@@ -128,8 +138,10 @@ def getActiveWordAnswer(thisWord, ansNumber):
         answer = word[ansIndex]
         
         
-     except:
-        print "EXCEPTION -  ANSWER QUESTION"
+     except Exception, e:
+        msg = "Exception:  WordGroups getActiveWordAnswer -  thisWord " + thisWord + "   -- %s "  % e
+        myLog.Log(msg)
+        print msg           
         answer = ""
         
         
@@ -163,8 +175,10 @@ def getActiveWordAnswerTF(thisWord, ansNumber):
             answer = "T"
                    
         
-     except:
-        print "EXCEPTION -  TF ANSWER QUESTION"
+     except Exception, e:
+         msg = "Exception:  WordGroups getActiveWordAnswerTF -  thisWord " + thisWord + "   -- %s "  % e
+         myLog.Log(msg)
+         print msg          
         
         
      return answer
@@ -192,8 +206,11 @@ def getActiveWordRemediation(thisWord, rightWrong):
         
                    
         
-     except:
-        print "EXCEPTION -  In getActiveWordRemediation"
+     except Exception, e:
+         msg = "Exception:  WordGroups getActiveWordRemediation -  thisWord " + thisWord + "   -- %s "  % e
+         myLog.Log(msg)
+         print msg           
+        
         
         
      return ""
